@@ -26,6 +26,7 @@ public class Level {
 	private BackgroundLayer backgroundLayer;
 	/** Foreground layer */
 	private ForegroundLayer foregroundLayer;
+	private boolean[] visited;
 	/** The name of the Level */
 	public String name = "save";
 	/** Whether or not the Level is initialized */
@@ -41,6 +42,7 @@ public class Level {
 		this.height = height;
 		this.backgroundLayer = new BackgroundLayer(width, height);
 		this.foregroundLayer = new ForegroundLayer(width, height);
+		visited = new boolean[width * height];
 		this.initialized = true;
 	}
 	
@@ -68,6 +70,7 @@ public class Level {
 		this.foregroundLayer = (ForegroundLayer) foreground;
 		this.width = background.getWidth();
 		this.height = background.getHeight();
+		visited = new boolean[width * height];
 		this.name = "untitled";
 		this.initialized = true;
 	}
@@ -153,6 +156,7 @@ public class Level {
 			databuf.get(fgData);
 			this.backgroundLayer = new BackgroundLayer(width, height, bgTiles, bgData);
 			this.foregroundLayer = new ForegroundLayer(width, height, fgTiles, fgData);
+			visited = new boolean[width * height];
 			this.name = filename.substring(0, filename.indexOf(".tl"));
 		}
 		catch(IOException ex) {
@@ -298,6 +302,24 @@ public class Level {
 	 */
 	public boolean setFgData(int x, int y, int data) {
 		return foregroundLayer.setData(x, y, data);
+	}
+	
+	public boolean visited(int x, int y) {
+		if(x < 0 || y < 0 || x >= width || y >= height)
+			return false;
+		return visited[y * width + x];
+	}
+	
+	public void visit(int x, int y) {
+		if(x < 0 || y < 0 || x >= width || y >= height)
+			return;
+		visited[y * width + x] = true;
+	}
+	
+	public boolean canPass(int x, int y) {
+		if(x < 0 || y < 0 || x >= width || y >= height)
+			return false;
+		return !(getFg(x, y).isSolid() || getBg(x, y).isSolid() || getFg(x, y).isLiquid() || getBg(x, y).isLiquid());
 	}
 	
 	public int getWidth() {

@@ -24,6 +24,7 @@ public class TileTypes {
 
 		// Initialize Tile types
 		try {
+			addTile(new Tile(AIR, "air"));
 			addTile(new Tile(NULL, "null", sheet.getTileTexture(9 * sheet.width)));
 			addTile(new DirtTile(DIRT, "dirt", sheet.getCustomTileTexture(0, 0, 5, 3)));
 			addTile(new MultitextureTile(GRASS, "grass", sheet.getCustomTileTexture(1, 9, 3, 1)));
@@ -33,7 +34,6 @@ public class TileTypes {
 			addTile(new SnowyGrassTile(SNOWY_GRASS, "snowy grass", sheet.getCustomTileTexture(0, 6, 5, 3)));
 			addTile(new FrozenLakeTile(LAKE_FROZEN, "frozen lake", sheet.getCustomTileTexture(5, 3, 3, 3)));
 			
-			addTile(new Tile(AIR, "air"));
 			addTile(new MultitextureForegroundTile(TREE, "tree", sheet.getCustomTileTexture(4, 9, 2, 1)));
 			addTile(new MultitextureForegroundTile(BUSH, "bush", sheet.getCustomTileTexture(6, 9, 1, 1)));
 			addTile(new MultitextureForegroundTile(SIGN, "sign", sheet.getCustomTileTexture(7, 9, 3, 1)));

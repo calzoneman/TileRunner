@@ -1,5 +1,6 @@
 package net.calzoneman.TileLand.screen;
 
+
 import net.calzoneman.TileLand.Game;
 import net.calzoneman.TileLand.event.EventManager;
 import net.calzoneman.TileLand.gfx.Renderer;
@@ -26,6 +27,9 @@ public class MainScreen extends GameScreen {
 	/** Colors for Mouse overlay */
 	private static Color transparentRed = new Color(255, 0, 0, 130);
 	private static Color transparentGreen = new Color(0, 255, 0, 130);
+	static Color lampColor = new Color(180, 180, 80, 100);
+	static Color fogColor = new Color(0, 0, 0, 140);
+	static Color darkFogColor = new Color(0, 0, 0, 230);
 	
 	public MainScreen(Game parent) {
 		super(0, 0, Display.getWidth(), Display.getHeight(), parent);
@@ -58,10 +62,10 @@ public class MainScreen extends GameScreen {
 				// Update the current movement key if applicable
 				if(Keyboard.getEventKeyState()) {
 					switch(Keyboard.getEventKey()) {
-						case Keyboard.KEY_W:
-						case Keyboard.KEY_S:
-						case Keyboard.KEY_A:
-						case Keyboard.KEY_D:
+						case Keyboard.KEY_UP:
+						case Keyboard.KEY_DOWN:
+						case Keyboard.KEY_LEFT:
+						case Keyboard.KEY_RIGHT:
 							currentMoveKey = Keyboard.getEventKey();
 							break;
 						default:
@@ -69,17 +73,17 @@ public class MainScreen extends GameScreen {
 					}
 				}
 			}
-			if(!keys[Keyboard.KEY_W] && !keys[Keyboard.KEY_S] && !keys[Keyboard.KEY_A] && !keys[Keyboard.KEY_D])
+			if(!keys[Keyboard.KEY_UP] && !keys[Keyboard.KEY_DOWN] && !keys[Keyboard.KEY_LEFT] && !keys[Keyboard.KEY_RIGHT])
 				currentMoveKey = -1;
 			if(currentMoveKey != -1 && !keys[currentMoveKey]) {
-				if(keys[Keyboard.KEY_W])
-					currentMoveKey = Keyboard.KEY_W;
-				else if(keys[Keyboard.KEY_S])
-					currentMoveKey = Keyboard.KEY_S;
-				else if(keys[Keyboard.KEY_A])
-					currentMoveKey = Keyboard.KEY_A;
-				else if(keys[Keyboard.KEY_D])
-					currentMoveKey = Keyboard.KEY_D;
+				if(keys[Keyboard.KEY_UP])
+					currentMoveKey = Keyboard.KEY_UP;
+				else if(keys[Keyboard.KEY_DOWN])
+					currentMoveKey = Keyboard.KEY_DOWN;
+				else if(keys[Keyboard.KEY_LEFT])
+					currentMoveKey = Keyboard.KEY_LEFT;
+				else if(keys[Keyboard.KEY_RIGHT])
+					currentMoveKey = Keyboard.KEY_RIGHT;
 			}
 			// Switch to the next background/foreground tile
 			if(keys[Keyboard.KEY_E]) {
@@ -214,7 +218,10 @@ public class MainScreen extends GameScreen {
 	}
 	
 	private void renderLevel(int offX, int offY, int maxWidth, int maxHeight) {
+		int lampRadius = Player.LAMP_RADIUS;
 		Player player = parent.getPlayer();
+		int px = player.getTilePosition().x;
+		int py = player.getTilePosition().y;
 		Level lvl = player.getLevel();
 		for(int i = offX; i < offX + maxWidth; i++) {
 			for(int j = offY; j < offY + maxHeight; j++) {
@@ -222,10 +229,21 @@ public class MainScreen extends GameScreen {
 				if(bg != null) {
 					bg.render(lvl, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
 				}
+				
 				Tile fg = lvl.getFg(i, j);
 				if(fg != null && fg.id != -1) {
 					fg.render(lvl, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
 				}
+
+				Color col = darkFogColor;
+				if((i - px)*(i - px) + (j - py) * (j - py) <= lampRadius) {
+					col = lampColor;
+				}
+				else if(lvl.visited(i, j))
+					col = fogColor;
+				Renderer.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, col);
+
+				
 			}
 		}
 	}

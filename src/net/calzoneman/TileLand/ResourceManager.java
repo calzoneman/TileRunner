@@ -1,6 +1,7 @@
 package net.calzoneman.TileLand;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import net.calzoneman.TileLand.gfx.SpriteSheet;
@@ -24,6 +25,16 @@ public class ResourceManager {
 	final String[] fontFormats = { "TTF" };
 	
 	public ResourceManager() {
+		/*textures = new HashMap<String, Texture>();
+		try {
+			textures.put("res/title.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/title.png")));
+			textures.put("res/player/default.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/player/default.png")));
+			textures.put("res/gui/button.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/gui/button.png")));
+			textures.put("res/gui/textbox.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/gui/textbox.png")));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}*/
 		this("res");
 	}
 	
@@ -39,7 +50,7 @@ public class ResourceManager {
 		File src = new File(folder);
 		for(File f : src.listFiles()) {
 			if(f.isDirectory() && recursive)
-				processFolder(f.getPath(), true);//folder + File.pathSeparator + f.getName(), true);
+				processFolder(f.getPath(), true);
 			else if(f.isFile()) {
 				String fmt = "";
 				if(!f.getName().contains("."))

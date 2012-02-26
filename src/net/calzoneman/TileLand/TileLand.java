@@ -22,7 +22,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 public class TileLand {	
-	public static final String version = "0.21a_02";
+	public static final String version = "0.01a";
 	static AtomicReference<Dimension> newSize = new AtomicReference<Dimension>();
 	static boolean closeRequested = false;
 	static final Dimension DEFAULT_DIMENSION = new Dimension(640, 480);
@@ -30,7 +30,7 @@ public class TileLand {
 	
 	static ResourceManager rm;
 	public static void main(String[] args) {		
-		final Frame frame = new Frame("Tileland " + version);
+		final Frame frame = new Frame("TileRunner " + version);
 		frame.setLayout(new BorderLayout());
 		final Canvas canvas = new Canvas();
 		canvas.addComponentListener(new ComponentAdapter() {

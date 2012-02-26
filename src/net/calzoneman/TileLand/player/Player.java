@@ -1,12 +1,16 @@
 package net.calzoneman.TileLand.player;
 
 
+import java.util.Random;
+
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.Color;
 
+import net.calzoneman.TileLand.Game;
 import net.calzoneman.TileLand.gfx.PlayerSprite;
 import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.TilelandFont;
 import net.calzoneman.TileLand.inventory.Item;
 import net.calzoneman.TileLand.inventory.Inventory;
 import net.calzoneman.TileLand.inventory.ItemStack;
@@ -18,6 +22,7 @@ import net.calzoneman.TileLand.tile.Tile;
 public class Player {
 	
 	public static final int POSITION_FACTOR = 0;
+	public static final int LAMP_RADIUS = 4;
 	
 	/** The name of the Player */
 	private String name;
@@ -30,6 +35,7 @@ public class Player {
 	/** The current direction the player is facing */
 	private int facing = PlayerSprite.FACING_DOWN;
 	private PlayerInventory inventory;
+	private final Random rand = new Random();
 	
 	/**
 	 * Parameterless constructor
@@ -83,36 +89,28 @@ public class Player {
 		this.setName(name);
 		this.setPosition(position);
 		this.inventory = new PlayerInventory();
-			//inventory.addItemStack(new ItemStack(TileTypes.getTile(TileId.SNOWY_GRASS), 100));
-			//inventory.addItemStack(new ItemStack(TileTypes.getTile(TileId.COBBLESTONE_ROAD), 100));
-			//inventory.addItemStack(new ItemStack(TileTypes.getTile(TileId.BUSH), 100));
-			//inventory.addItemStack(new ItemStack(TileTypes.getTile(TileId.SIGN), 100));
 	}
 	
 	public boolean move(int currentMoveKey) {
 		String move = "";
 		switch(currentMoveKey) {
-			case Keyboard.KEY_W:
-				Tile up = level.getFg(position.x >> POSITION_FACTOR, (position.y-1) >> POSITION_FACTOR);
-				if(up == null || up.isSolid())
+			case Keyboard.KEY_UP:
+				if(!level.canPass(position.x >> POSITION_FACTOR, (position.y-1) >> POSITION_FACTOR))
 					break;
 				move = "up";
 				break;
-			case Keyboard.KEY_S:
-				Tile down = level.getFg(position.x >> POSITION_FACTOR, position.y+1);
-				if(down == null || down.isSolid())
+			case Keyboard.KEY_DOWN:
+				if(!level.canPass(position.x >> POSITION_FACTOR, (position.y+1) >> POSITION_FACTOR))
 					break;
 				move = "down";
 				break;
-			case Keyboard.KEY_A:
-				Tile left = level.getFg((position.x-1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR);
-				if(left == null || left.isSolid())
+			case Keyboard.KEY_LEFT:
+				if(!level.canPass((position.x-1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR))
 					break;
 				move = "left";
 				break;
-			case Keyboard.KEY_D:
-				Tile right = level.getFg((position.x+1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR);
-				if(right == null || right.isSolid())
+			case Keyboard.KEY_RIGHT:
+				if(!level.canPass((position.x+1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR))
 					break;
 				move = "right";
 				break;
@@ -139,6 +137,14 @@ public class Player {
 			}
 			if(oldFacing == facing)
 				sprite.nextFrame();
+			int px = getTilePosition().x;
+			int py = getTilePosition().y;
+			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
+				for(int j = py - LAMP_RADIUS; j <= py + LAMP_RADIUS; j++) {
+					if((i - px) * (i - px) + (j - py) * (j - py) <= LAMP_RADIUS + rand.nextInt(2) - 1)
+						level.visit(i, j);
+				}
+			}
 			return true;
 		}
 		else {
@@ -181,7 +187,7 @@ public class Player {
 
 	public void setName(String name) {
 		if(name.equals("calzoneman"))
-			name = "�9calzoneman";
+			name = TilelandFont.COLOR_CODE_DELIMITER + "9calzoneman";
 		this.name = name;
 	}
 	

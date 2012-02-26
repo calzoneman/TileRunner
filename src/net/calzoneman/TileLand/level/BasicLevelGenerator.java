@@ -44,9 +44,7 @@ public class BasicLevelGenerator extends LevelGenerator {
 					bgData[index] = (byte) rand.nextInt(((MultitextureTile) TileTypes.getTile(TypeId.GRASS)).getNumStates());
 				}
 				else {
-					fgTiles[index] = TypeId.MOUNTAIN;
-					bgTiles[index] = TypeId.GRASS;
-					bgData[index] = (byte) rand.nextInt(((MultitextureTile) TileTypes.getTile(TypeId.GRASS)).getNumStates());
+					bgTiles[index] = TypeId.MOUNTAIN;
 				}
 			}
 		}

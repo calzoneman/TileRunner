@@ -6,7 +6,7 @@ import net.calzoneman.TileLand.gfx.Renderer;
 import net.calzoneman.TileLand.tile.Tile;
 
 public class Quickbar {
-	public static final int QUICKBAR_COUNT = 10;
+	public static final int QUICKBAR_COUNT = 4;
 	static final int SLOT_PADDING = 6;
 	private int x;
 	private int y;
@@ -18,7 +18,7 @@ public class Quickbar {
 	private Color barBgColor = new Color(0.4f, 0.4f, 0.4f, 0.5f);
 	
 	public Quickbar() {
-		this(10, 10, 10 * Tile.TILESIZE + 11 * SLOT_PADDING, Tile.TILESIZE + 2 * SLOT_PADDING);
+		this(10, 10, QUICKBAR_COUNT * Tile.TILESIZE + (QUICKBAR_COUNT + 1) * SLOT_PADDING, Tile.TILESIZE + 2 * SLOT_PADDING);
 	}
 	
 	public Quickbar(int x, int y, int width, int height) {

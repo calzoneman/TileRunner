@@ -2,7 +2,7 @@ package net.calzoneman.TileLand.tile;
 
 import org.newdawn.slick.opengl.Texture;
 
-public class MountainTile extends PartialDirectionalFgTile {
+public class MountainTile extends PartialDirectionalTile {
 
 	public MountainTile(short id, String name, Texture texture) {
 		super(id, name, texture);
