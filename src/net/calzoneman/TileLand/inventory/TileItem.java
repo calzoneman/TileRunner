@@ -1,5 +1,6 @@
 package net.calzoneman.TileLand.inventory;
 
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.tile.MultitextureTile;
 import net.calzoneman.TileLand.tile.Tile;
 
@@ -17,11 +18,11 @@ public class TileItem extends Item {
 	}
 	
 	@Override
-	public void render(int x, int y) {
+	public void render(Screen screen, int x, int y) {
 		if(tile instanceof MultitextureTile)
-			((MultitextureTile) tile).render(x, y, data);
+			((MultitextureTile) tile).render(screen, x, y, data);
 		else
-			tile.render(null, 0, 0, x, y);
+			tile.render(screen, null, 0, 0, x, y);
 	}
 
 }

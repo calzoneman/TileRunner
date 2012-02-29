@@ -1,6 +1,6 @@
 package net.calzoneman.TileLand.inventory;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 
 import org.newdawn.slick.opengl.Texture;
 
@@ -56,7 +56,7 @@ public class Item {
 			return false;
 	}
 	
-	public void render(int x, int y) {
-		Renderer.renderTexture(texture, x, y);
+	public void render(Screen screen, int x, int y) {
+		screen.renderTexture(texture, x, y);
 	}
 }

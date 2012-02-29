@@ -1,5 +1,7 @@
 package net.calzoneman.TileLand.gui;
 
+import net.calzoneman.TileLand.gfx.Screen;
+
 
 public abstract class GUIComponent {
 	protected int x;
@@ -17,7 +19,7 @@ public abstract class GUIComponent {
 		this.focused = false;
 	}
 	
-	public abstract void render();
+	public abstract void render(Screen screen);
 	
 	public void focus() {
 		this.focused = true;

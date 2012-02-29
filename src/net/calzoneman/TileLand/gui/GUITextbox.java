@@ -1,12 +1,11 @@
 package net.calzoneman.TileLand.gui;
 
 
-import net.calzoneman.TileLand.TileLand;
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.ResourceManager;
+import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gfx.Font;
 
 import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.opengl.Texture;
 
@@ -17,9 +16,7 @@ public class GUITextbox extends GUIComponent {
 	static final Rectangle LEFT_EDGE = new Rectangle(0, 0, 3, 30);
 	static final Rectangle CENTER = new Rectangle(3, 0, 1, 30);
 	static final Rectangle RIGHT_EDGE = new Rectangle(4, 0, 3, 30);
-	
-	static final Color transparent = new Color(0, 0, 0, 0);
-	
+		
 	static final int PADDING_HORIZONTAL = EDGE_WIDTH + 8;
 	
 	protected Texture texture;
@@ -40,7 +37,7 @@ public class GUITextbox extends GUIComponent {
 		this.text = defaultText;
 		this.defaultText = defaultText;
 		this.maxLength = -1;
-		this.texture = TileLand.getResourceManager().getTexture("res/gui/textbox.png");
+		this.texture = ResourceManager.GUI_TEXTBOX_TEXTURE;
 		this.cursor = defaultText.length();
 		this.viewOffset = 0;
 		this.endOffset = 0;
@@ -74,24 +71,23 @@ public class GUITextbox extends GUIComponent {
 	}
 
 	@Override
-	public void render() {
-		TilelandFont fnt = TileLand.getResourceManager().getPreferredFont();
-		Renderer.renderTextureSubrectangle(texture, LEFT_EDGE, x, y);
-		Renderer.renderTextureSubrectangle(texture, CENTER, x + EDGE_WIDTH, y, width - 2*EDGE_WIDTH, height);
-		Renderer.renderTextureSubrectangle(texture, RIGHT_EDGE, x + width - EDGE_WIDTH, y);
-		int h = fnt.getHeight(text);
+	public void render(Screen screen) {
+		screen.renderSubTexture(texture, LEFT_EDGE, x, y);
+		screen.renderSubTexture(texture, CENTER, x + EDGE_WIDTH, y, width - 2*EDGE_WIDTH, height);
+		screen.renderSubTexture(texture, RIGHT_EDGE, x + width - EDGE_WIDTH, y);
+		int h = Font.getHeight(text);
 		if(h == 0)
-			h = fnt.getHeight("|");
+			h = Font.getHeight("|");
 		int sy = y + height/2 - h/2;
 		if(text.length() > 0) {
-			fnt.drawString(x + PADDING_HORIZONTAL, sy, text.substring(viewOffset, text.length() - endOffset), transparent);
+			Font.draw(text.substring(viewOffset, text.length() - endOffset), screen, x + PADDING_HORIZONTAL, sy);
 		}
 		
 		if(isFocused() && (System.currentTimeMillis() / 500) % 2 == 0) {
 			int w = 0;
 			if(text.length() > 0)
-				w = fnt.getWidth(text.substring(viewOffset, cursor));
-			fnt.drawString(x + PADDING_HORIZONTAL + w, sy, "_", transparent);
+				w = Font.getWidth(text.substring(viewOffset, cursor));
+			Font.draw("_", screen, x + PADDING_HORIZONTAL + w, sy);
 		}
 	}
 	
@@ -140,7 +136,7 @@ public class GUITextbox extends GUIComponent {
 		}
 		else if(keychar != Keyboard.CHAR_NONE && (maxLength == -1 || text.length() < maxLength-1)) {
 			text = insert(text, keychar, cursor);
-			int w = TileLand.getResourceManager().getPreferredFont().getWidth(text) + PADDING_HORIZONTAL;
+			int w = Font.getWidth(text) + PADDING_HORIZONTAL;
 			if(w > this.width - PADDING_HORIZONTAL) {
 				endOffset++;
 				if(cursor >= text.length() - endOffset) {

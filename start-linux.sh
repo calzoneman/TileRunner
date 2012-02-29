@@ -1,1 +1,1 @@
-java -Djava.library.path=./lib/native/linux -jar TileLand.jar
+java -Djava.library.path=./lib/native/linux -jar TileRunner.jar

@@ -6,8 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.newdawn.slick.Color;
+
+import net.calzoneman.TileLand.entity.Entity;
+import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.player.Player;
 import net.calzoneman.TileLand.tile.Tile;
+import net.calzoneman.TileLand.tile.TileTypes;
 
 public class Level {
 	/** The size, in bytes, of the level header */
@@ -16,6 +24,9 @@ public class Level {
 	public static final int SAVE_MAGIC = 0x54494c45; // "TILE" in ASCII hex
 	/** The file format version */
 	public static final byte SAVE_VERSION = 0x05;
+	static Color lampColor = new Color(180, 180, 80, 100);
+	static Color fogColor = new Color(0, 0, 0, 140);
+	static Color darkFogColor = new Color(0, 0, 0, 230);
 	/** The width of the Level, in tiles */
 	private int width = 0;
 	/** The height of the Level, in tiles */
@@ -32,6 +43,8 @@ public class Level {
 	/** Whether or not the Level is initialized */
 	public boolean initialized = false;
 	
+	private List<Entity> entities;
+	
 	/**
 	 * Constructor - Generates a new Level with the specified width and height
 	 * @param width The width of the new map, in tiles
@@ -43,6 +56,7 @@ public class Level {
 		this.backgroundLayer = new BackgroundLayer(width, height);
 		this.foregroundLayer = new ForegroundLayer(width, height);
 		visited = new boolean[width * height];
+		entities = new ArrayList<Entity>();
 		this.initialized = true;
 	}
 	
@@ -72,6 +86,7 @@ public class Level {
 		this.height = background.getHeight();
 		visited = new boolean[width * height];
 		this.name = "untitled";
+		entities = new ArrayList<Entity>();
 		this.initialized = true;
 	}
 
@@ -157,6 +172,7 @@ public class Level {
 			this.backgroundLayer = new BackgroundLayer(width, height, bgTiles, bgData);
 			this.foregroundLayer = new ForegroundLayer(width, height, fgTiles, fgData);
 			visited = new boolean[width * height];
+			entities = new ArrayList<Entity>();
 			this.name = filename.substring(0, filename.indexOf(".tl"));
 		}
 		catch(IOException ex) {
@@ -169,6 +185,44 @@ public class Level {
 		}
 		initialized = true;
 		return true;
+	}
+	
+	public void render(Screen screen, Player player, int offX, int offY, int maxWidth, int maxHeight) {
+		int lampRadius = Player.LAMP_RADIUS;
+		int px = player.getTilePosition().x;
+		int py = player.getTilePosition().y;
+		for(int i = offX; i < offX + maxWidth; i++) {
+			for(int j = offY; j < offY + maxHeight; j++) {
+				//System.out.println("Drawing tile at " + i + ", " + j);
+				Tile bg = getBg(i, j);
+				if(bg != null) {
+					bg.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
+				}
+				
+				Tile fg = getFg(i, j);
+				if(fg != null && fg.id != -1) {
+					fg.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
+				}
+				if((i - px)*(i - px) + (j - py) * (j - py) <= lampRadius)
+					screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, lampColor);
+				else {
+					screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, fogColor);
+					if(!visited(i, j))
+						TileTypes.fog.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
+				}
+			}
+		}
+		renderEntities(screen, offX, offY, maxWidth, maxHeight);
+	}
+	
+	private void renderEntities(Screen screen, int offX, int offY, int maxWidth, int maxHeight) {
+		for(Entity ent : entities) {
+			Location pos = ent.getPosition();
+			Location tpos = ent.getTilePosition();
+			if(tpos.x >= offX && tpos.x < offX + maxWidth && tpos.y >= offY && tpos.y < offY + maxHeight) {
+				ent.render(screen, this, pos.x - offX * Tile.TILESIZE, pos.y - offY * Tile.TILESIZE);
+			}
+		}
 	}
 	
 	// Tile getters/setters
@@ -302,6 +356,14 @@ public class Level {
 	 */
 	public boolean setFgData(int x, int y, int data) {
 		return foregroundLayer.setData(x, y, data);
+	}
+	
+	public void addEntity(Entity ent) {
+		entities.add(ent);
+	}
+	
+	public void removeEntity(Entity ent) {
+		entities.remove(ent);
 	}
 	
 	public boolean visited(int x, int y) {

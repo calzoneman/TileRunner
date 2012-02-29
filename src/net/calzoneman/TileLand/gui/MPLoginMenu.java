@@ -1,7 +1,6 @@
 package net.calzoneman.TileLand.gui;
 
-import net.calzoneman.TileLand.TileLand;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.util.Delegate;
 
 import org.lwjgl.opengl.Display;
@@ -25,7 +24,7 @@ public class MPLoginMenu extends GUIMenu {
 		int x1 = 175;
 		int x2 = x1 + 90;
 		int curY = 80;
-		int charHeight = TileLand.getResourceManager().getPreferredFont().getHeight("|");
+		int charHeight = Font.getHeight("|");
 		
 		GUITextbox unameTxt = new GUITextbox(x2, curY, 200);
 		unameTxt.setMaxLength(32);

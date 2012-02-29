@@ -1,1 +1,1 @@
-java -Djava.library.path=.\lib\native\windows -jar TileLand.jar
+java -Djava.library.path=.\lib\native\windows -jar TileRunner.jar

@@ -1,41 +1,27 @@
 package net.calzoneman.TileLand.player;
 
 
-import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.Color;
 
-import net.calzoneman.TileLand.Game;
-import net.calzoneman.TileLand.gfx.PlayerSprite;
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.entity.Mob;
+import net.calzoneman.TileLand.gfx.MobSprite;
+import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.inventory.Item;
-import net.calzoneman.TileLand.inventory.Inventory;
 import net.calzoneman.TileLand.inventory.ItemStack;
 import net.calzoneman.TileLand.inventory.PlayerInventory;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.level.Location;
-import net.calzoneman.TileLand.tile.Tile;
 
-public class Player {
+public class Player extends Mob {
 	
-	public static final int POSITION_FACTOR = 0;
 	public static final int LAMP_RADIUS = 4;
 	
 	/** The name of the Player */
 	private String name;
-	/** The player sprite */
-	private PlayerSprite sprite;
-	/** The Level in which the Player currently exists */
-	private Level level;
-	/** The Player's position within the level */
-	private Location position;
-	/** The current direction the player is facing */
-	private int facing = PlayerSprite.FACING_DOWN;
 	private PlayerInventory inventory;
-	private final Random rand = new Random();
 	
 	/**
 	 * Parameterless constructor
@@ -84,59 +70,17 @@ public class Player {
 	 * @param position The position of the Player
 	 */
 	public Player(Texture sprite, Level level, String name, Location position) {
-		this.setSprite(sprite);
+		super(position.x, position.y, new MobSprite(sprite));
 		this.setLevel(level);
 		this.setName(name);
 		this.setPosition(position);
 		this.inventory = new PlayerInventory();
 	}
 	
-	public boolean move(int currentMoveKey) {
-		String move = "";
-		switch(currentMoveKey) {
-			case Keyboard.KEY_UP:
-				if(!level.canPass(position.x >> POSITION_FACTOR, (position.y-1) >> POSITION_FACTOR))
-					break;
-				move = "up";
-				break;
-			case Keyboard.KEY_DOWN:
-				if(!level.canPass(position.x >> POSITION_FACTOR, (position.y+1) >> POSITION_FACTOR))
-					break;
-				move = "down";
-				break;
-			case Keyboard.KEY_LEFT:
-				if(!level.canPass((position.x-1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR))
-					break;
-				move = "left";
-				break;
-			case Keyboard.KEY_RIGHT:
-				if(!level.canPass((position.x+1) >> POSITION_FACTOR, position.y >> POSITION_FACTOR))
-					break;
-				move = "right";
-				break;
-			default:
-				break;
-		}
-		if(!move.equals("")) {
-			int oldFacing = this.facing;
-			if(move.equals("up")) {
-				position.y--;
-				setFacing(PlayerSprite.FACING_UP);
-			}
-			else if(move.equals("right")) {
-				position.x++;
-				setFacing(PlayerSprite.FACING_RIGHT);
-			}
-			else if(move.equals("down")) {
-				position.y++;
-				setFacing(PlayerSprite.FACING_DOWN);
-			}
-			else if(move.equals("left")) {
-				position.x--;
-				setFacing(PlayerSprite.FACING_LEFT);
-			}
-			if(oldFacing == facing)
-				sprite.nextFrame();
+	@Override
+	public boolean move(int direction) {
+		boolean success = super.move(direction);
+		if(success) {
 			int px = getTilePosition().x;
 			int py = getTilePosition().y;
 			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
@@ -145,40 +89,24 @@ public class Player {
 						level.visit(i, j);
 				}
 			}
-			return true;
 		}
-		else {
-			sprite.resetFrame();
-			return false;
-		}
-	}
-
-	public PlayerSprite getSprite() {
-		return sprite;
-	}
-
-	public void setSprite(Texture sprite) {
-		this.sprite = new PlayerSprite(sprite);
-	}
-
-	public Level getLevel() {
-		return level;
-	}
-
-	public void setLevel(Level level) {
-		this.level = level;
-	}
-
-	public Location getPosition() {
-		return position;
+		return success;
 	}
 	
-	public Location getTilePosition() {
-		return new Location(position.x >> POSITION_FACTOR, position.y >> POSITION_FACTOR);
-	}
-
-	public void setPosition(Location position) {
-		this.position = new Location(position); // Create a new instance of Location so we aren't modifying the original input
+	@Override
+	public boolean move(int direction, boolean sprint) {
+		boolean success = super.move(direction, sprint);
+		if(success) {
+			int px = getTilePosition().x;
+			int py = getTilePosition().y;
+			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
+				for(int j = py - LAMP_RADIUS; j <= py + LAMP_RADIUS; j++) {
+					if((i - px) * (i - px) + (j - py) * (j - py) <= LAMP_RADIUS + rand.nextInt(2) - 1)
+						level.visit(i, j);
+				}
+			}
+		}
+		return success;
 	}
 
 	public String getName() {
@@ -187,7 +115,7 @@ public class Player {
 
 	public void setName(String name) {
 		if(name.equals("calzoneman"))
-			name = TilelandFont.COLOR_CODE_DELIMITER + "9calzoneman";
+			name = Font.COLOR_CODE_DELIMITER + "9calzoneman";
 		this.name = name;
 	}
 	
@@ -198,30 +126,22 @@ public class Player {
 		return it.getItem();
 	}
 	
-	public PlayerInventory getPlayerInventory() {
+	public PlayerInventory getInventory() {
 		return this.inventory;
+	}
+
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		super.render(screen, level, x, y);
+		int w = Font.getWidth(name);
+		int sx = x - w/2;
+		int sy = y - sprite.getHeight();
+		Font.draw(name, screen, sx, sy, Color.black);
 	}
 	
-	public Inventory getInventory() {
-		return this.inventory;
-	}
-
-	public void render(int x, int y) {
-		// Draw the player sprite
-		this.sprite.render(x, y - (PlayerSprite.PLAYER_HEIGHT - Tile.TILESIZE));
-		int w = Renderer.getFont().getWidth(name);
-		int sx = x + PlayerSprite.PLAYER_WIDTH / 2 - w/2;
-		int sy = y - PlayerSprite.PLAYER_HEIGHT;
-		Renderer.renderString(sx, sy, name, Color.black);
-	}
-
-	public int getFacing() {
-		return facing;
-	}
-
-	public void setFacing(int facing) {
-		this.facing = facing;
-		this.sprite.setFacing(facing);
+	@Override
+	public void hit(Level level, Mob hitter, int hitDirection) {
+	
 	}
 
 }

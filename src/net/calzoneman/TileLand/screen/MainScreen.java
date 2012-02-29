@@ -2,8 +2,9 @@ package net.calzoneman.TileLand.screen;
 
 
 import net.calzoneman.TileLand.Game;
+import net.calzoneman.TileLand.entity.Entity;
 import net.calzoneman.TileLand.event.EventManager;
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.inventory.ItemStack;
 import net.calzoneman.TileLand.inventory.TileItem;
 import net.calzoneman.TileLand.level.Level;
@@ -87,11 +88,11 @@ public class MainScreen extends GameScreen {
 			}
 			// Switch to the next background/foreground tile
 			if(keys[Keyboard.KEY_E]) {
-				ply.getPlayerInventory().getQuickbar().nextSlot();
+				ply.getInventory().getQuickbar().nextSlot();
 			}
 			// Switch to the previous background/foreground tile
 			if(keys[Keyboard.KEY_Q]) {
-				ply.getPlayerInventory().getQuickbar().prevSlot();
+				ply.getInventory().getQuickbar().prevSlot();
 			}
 			// Set spawnpoint
 			if(keys[Keyboard.KEY_RETURN])
@@ -110,8 +111,8 @@ public class MainScreen extends GameScreen {
 			}
 		}
 		// Handle movement
-		if(System.currentTimeMillis() >= lastMoveTime + 100 || keys[Keyboard.KEY_LSHIFT]) {
-			if(ply.move(currentMoveKey)) {
+		if(System.currentTimeMillis() >= lastMoveTime + 0 || keys[Keyboard.KEY_LSHIFT]) {
+			if(ply.move(currentMoveKey, keys[Keyboard.KEY_LSHIFT])) {
 				EventManager.manager.onPlayerMove(parent, ply.getPosition(), ply.getFacing());
 				click(ply, Mouse.getX(), Mouse.getY());
 				lastMoveTime = System.currentTimeMillis();
@@ -138,10 +139,10 @@ public class MainScreen extends GameScreen {
 		if(mouse[1]) {
 			int fg = level.getFgId(tx, ty);
 			if(fg != -1 && fg != TypeId.AIR) {
-				level.getFg(tx, ty).hit(level, ply, ply.getHeldItem(), tx, ty);
+				level.getFg(tx, ty).hit(level, ply, tx, ty);
 			}
 			else {
-				level.getBg(tx, ty).hit(level, ply, ply.getHeldItem(), tx, ty);
+				level.getBg(tx, ty).hit(level, ply, tx, ty);
 			}
 		}
 		else if(mouse[0] && tx >= 0 && ty >= 0 && tx < level.getWidth() && ty < level.getHeight()) {
@@ -151,14 +152,14 @@ public class MainScreen extends GameScreen {
 					if(level.getFgId(tx, ty) == TypeId.AIR && tx != ply.getTilePosition().x && ty != ply.getTilePosition().y) { 
 						level.setFg(tx, ty, it.getTile());
 						level.setFgData(tx, ty, it.getData());
-						ply.getInventory().removeOneItem(ply.getPlayerInventory().getQuickbar().getSelectedSlot());
+						ply.getInventory().removeOneItem(ply.getInventory().getQuickbar().getSelectedSlot());
 					}
 				}
 				else {
 					if(level.getBgId(tx, ty) != it.getTile().id) {
 						level.setBg(tx, ty, it.getTile());
 						level.setBgData(tx, ty, it.getData());
-						ply.getInventory().removeOneItem(ply.getPlayerInventory().getQuickbar().getSelectedSlot());
+						ply.getInventory().removeOneItem(ply.getInventory().getQuickbar().getSelectedSlot());
 					}
 				}
 			}
@@ -166,41 +167,42 @@ public class MainScreen extends GameScreen {
 	}
 
 	@Override
-	public void render() {
+	public void render(Screen screen) {
 		Player player = parent.getPlayer();
-		Renderer.renderFilledRect(0, 0, Display.getWidth(), Display.getHeight(), Color.red);
+		screen.renderFilledRect(0, 0, Display.getWidth(), Display.getHeight(), Color.magenta);
 		Level level = player.getLevel();
-		Location position = player.getTilePosition();
+		Location pos = player.getPosition();
+		Location tpos = player.getTilePosition();
 		// Calculate at what offset to begin rendering the level
 		Location renderStart = new Location(
-				position.x - Display.getWidth() / Tile.TILESIZE / 2,
-				position.y - Display.getHeight() / Tile.TILESIZE / 2);
+				tpos.x - Display.getWidth() / Tile.TILESIZE / 2,
+				tpos.y - Display.getHeight() / Tile.TILESIZE / 2);
 		// Render the level
+		screen.setOffset((pos.x % Entity.POSITIONS_PER_TILE), (pos.y % Entity.POSITIONS_PER_TILE));
 		if(level != null) {
-			// Background
-			renderLevel(renderStart.x, renderStart.y, Display.getWidth() / Tile.TILESIZE, Display.getHeight() / Tile.TILESIZE);
+			level.render(screen, player, renderStart.x, renderStart.y, Display.getWidth() / Tile.TILESIZE + 1, Display.getHeight() / Tile.TILESIZE + 1);
 		}
-		// Render the player sprite
-		player.render((position.x - renderStart.x) * Tile.TILESIZE, (position.y - renderStart.y) * Tile.TILESIZE);
-		// Render the mouse
 		if(active)
-			renderMouse(renderStart);
+			renderMouse(screen, renderStart);
+		screen.setOffset(0, 0);
+		// Render the player sprite
+		player.render(screen, level, (tpos.x - renderStart.x) * Entity.POSITIONS_PER_TILE, (tpos.y - renderStart.y) * Entity.POSITIONS_PER_TILE);
 		// Render the HUD
-		player.getPlayerInventory().getQuickbar().render();
+		player.getInventory().getQuickbar().render(screen);
 	}
 	
-	private void renderMouse(Location renderStart) {
+	private void renderMouse(Screen screen, Location renderStart) {
 		Player player = parent.getPlayer();
 		Level level = player.getLevel();
 		ItemStack current = null;
 		Color col = transparentGreen;
 		int tx = Mouse.getX() / Tile.TILESIZE + renderStart.x;
 		int ty = (Display.getHeight() - Mouse.getY()) / Tile.TILESIZE + renderStart.y;
-		if(player.getPlayerInventory().getQuickbar().getSelectedItemStack() == null // Selected item is null
+		if(player.getInventory().getQuickbar().getSelectedItemStack() == null // Selected item is null
 				|| (tx == player.getPosition().x && ty == player.getPosition().y) // Cursor is over the player
 				|| tx < 0 || tx >= level.getWidth() || ty < 0 || ty >= level.getHeight()) // Mouse it outside the bounds of the Level
 			col = transparentRed;
-		current = player.getPlayerInventory().getQuickbar().getSelectedItemStack();
+		current = player.getInventory().getQuickbar().getSelectedItemStack();
 		
 		int mx = Mouse.getX();
 		int my = Mouse.getY();
@@ -208,44 +210,13 @@ public class MainScreen extends GameScreen {
 		ty = (Display.getHeight() - my) / Tile.TILESIZE;
 		if(current != null) {
 			col.bind();
-			current.getItem().render(tx * Tile.TILESIZE, ty * Tile.TILESIZE);
+			current.getItem().render(screen, tx * Tile.TILESIZE, ty * Tile.TILESIZE);
 		}
 		else {
-			Renderer.renderFilledRect(tx * Tile.TILESIZE, ty * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, col);
+			screen.renderFilledRect(tx * Tile.TILESIZE, ty * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, col);
 		}
 		// Draw border
-		Renderer.renderRect(tx * Tile.TILESIZE, ty * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, Color.black);
-	}
-	
-	private void renderLevel(int offX, int offY, int maxWidth, int maxHeight) {
-		int lampRadius = Player.LAMP_RADIUS;
-		Player player = parent.getPlayer();
-		int px = player.getTilePosition().x;
-		int py = player.getTilePosition().y;
-		Level lvl = player.getLevel();
-		for(int i = offX; i < offX + maxWidth; i++) {
-			for(int j = offY; j < offY + maxHeight; j++) {
-				Tile bg = lvl.getBg(i, j);
-				if(bg != null) {
-					bg.render(lvl, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
-				}
-				
-				Tile fg = lvl.getFg(i, j);
-				if(fg != null && fg.id != -1) {
-					fg.render(lvl, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
-				}
-
-				Color col = darkFogColor;
-				if((i - px)*(i - px) + (j - py) * (j - py) <= lampRadius) {
-					col = lampColor;
-				}
-				else if(lvl.visited(i, j))
-					col = fogColor;
-				Renderer.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, col);
-
-				
-			}
-		}
+		screen.renderRect(tx * Tile.TILESIZE, ty * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, Color.black);
 	}
 
 }

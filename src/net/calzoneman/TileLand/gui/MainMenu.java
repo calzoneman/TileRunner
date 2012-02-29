@@ -1,8 +1,8 @@
 package net.calzoneman.TileLand.gui;
 
-import net.calzoneman.TileLand.TileLand;
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.ResourceManager;
+import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.util.Delegate;
 
 import org.lwjgl.opengl.Display;
@@ -11,7 +11,6 @@ import org.newdawn.slick.Color;
 public class MainMenu extends GUIMenu {
 	
 	static final String copyright = "Copyright 2012 Calvin Montgomery";
-	static final Color transparent = new Color(0, 0, 0, 0);
 	static final Color backgroundColor = new Color(64, 64, 64);
 
 	public MainMenu() {
@@ -22,7 +21,7 @@ public class MainMenu extends GUIMenu {
 	@Override
 	public void init(int x, int y, int width, int height) {
 		GUIContainer container = new GUIContainer(Display.getWidth()/2 - 320, Display.getHeight()/2 - 240, 640, 480);
-		container.addChild("title", new GUIImage(container.getWidth()/2 - 256, 50, TileLand.getResourceManager().getTexture("res/title.png")));
+		container.addChild("title", new GUIImage(container.getWidth()/2 - 256, 50, ResourceManager.TITLE_TEXTURE));
 		
 		GUIButton newLvlBtn = new GUIButton(170, 200, 300, "New Game");
 		newLvlBtn.setClickHandler(
@@ -67,16 +66,14 @@ public class MainMenu extends GUIMenu {
 	}
 	
 	@Override
-	public void render() {
-		Renderer.renderFilledRect(0, 0, Display.getWidth(), Display.getHeight(), backgroundColor);
+	public void render(Screen screen) {
+		screen.renderFilledRect(0, 0, Display.getWidth(), Display.getHeight(), backgroundColor);
 		for(GUIComponent child : children.values()) {
-			child.render();
+			child.render(screen);
 		}
-		TilelandFont copyFont = TileLand.getResourceManager().getFont("res/font/default.ttf", 24);
-		if(copyFont.getWidth(copyright) > width - 5)
-			copyFont = TileLand.getResourceManager().getFont("res/font/default.ttf", 16);
-		if(copyFont.getWidth(copyright) > width - 5)
-			copyFont = TileLand.getResourceManager().getFont("res/font/default.ttf");
-		copyFont.drawString(5, Display.getHeight() - copyFont.getHeight(copyright) - 5, copyright, transparent);
+		if(Font.getWidthLarge(copyright) < width - 3)
+			Font.drawLarge(copyright, screen, 3, Display.getHeight() - Font.getHeightLarge(copyright));
+		else 
+			Font.draw(copyright, screen, 5, Display.getHeight() - Font.getHeight(copyright));
 	}
 }

@@ -4,8 +4,7 @@ import java.io.File;
 
 import org.lwjgl.opengl.Display;
 
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.util.Delegate;
 
 public class LoadLevelMenu extends GUIMenu {
@@ -24,7 +23,7 @@ public class LoadLevelMenu extends GUIMenu {
 		int x1 = 175;
 		int x2 = x1 + 100;
 		int curY = 145;
-		int charHeight = Renderer.getFont().getHeight("|");
+		int charHeight = Font.getHeight("|");
 		
 		GUITextbox plyNameTxt = new GUITextbox(x2, curY, 190, "Player");
 		plyNameTxt.setMaxLength(32);
@@ -106,7 +105,7 @@ public class LoadLevelMenu extends GUIMenu {
 			lvlName += ".tl";
 		File f = new File("saves/" + lvlName);
 		if(!f.exists() || !f.isFile())
-			((GUILabel) container.getChild("error")).setText(TilelandFont.TEXT_DARK_RED + "The level \"" + f.getPath() + "\" does not exist!");
+			((GUILabel) container.getChild("error")).setText(Font.TEXT_DARK_RED + "The level \"" + f.getPath() + "\" does not exist!");
 		else {
 			this.levelName = lvlName;
 			this.playerName = plyName;

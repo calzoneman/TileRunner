@@ -2,8 +2,7 @@ package net.calzoneman.TileLand.gui;
 
 import java.util.Stack;
 
-import net.calzoneman.TileLand.MultiplayerGame;
-import net.calzoneman.TileLand.player.Player;
+import net.calzoneman.TileLand.gfx.Screen;
 
 import org.lwjgl.opengl.Display;
 
@@ -47,19 +46,8 @@ public class MenuManager {
 			old = new MainMenu();
 			parentMenus = new Stack<GUIMenu>(); // Reset the menu Stack
 		}
-		else if(menuName.equals("multiplayergame")) {
-			if(currentMenu instanceof MPLoginMenu) {
-				MPLoginMenu mp = (MPLoginMenu) currentMenu;
-				currentMenu = new MultiplayerGameMenu(new Player(mp.getPlayer()), mp.getServer(), mp.getPort());
-			}
-			old = new MainMenu();
-			parentMenus = new Stack<GUIMenu>(); // Reset the menu Stack
-		}
 		else if(menuName.equals("mplogin")) {
 			currentMenu = new MPLoginMenu();
-		}
-		else if(menuName.equals("settexturemenu")) {
-			currentMenu = new TextureChooserMenu();
 		}
 		if(old != null)
 			pushParent(old);
@@ -80,10 +68,9 @@ public class MenuManager {
 		}
 	}
 	
-	public void render() {
-
+	public void render(Screen screen) {
 		if(currentMenu != null)
-			currentMenu.render();
+			currentMenu.render(screen);
 	}
 	
 	public void handleInput() {

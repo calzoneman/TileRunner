@@ -3,7 +3,7 @@ package net.calzoneman.TileLand.tile;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.opengl.Texture;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.level.Level;
 
 public class DirectionalTile extends Tile {
@@ -33,9 +33,9 @@ public class DirectionalTile extends Tile {
 	}
 
 	@Override
-	public void render(Level level, int tx, int ty, int x, int y) {
+	public void render(Screen screen, Level level, int tx, int ty, int x, int y) {
 		if(level == null) {
-			render(CENTER, x, y);
+			render(screen, CENTER, x, y);
 			return;
 		}
 		boolean u = connectsTo(level.getBg(tx, ty - 1));
@@ -49,36 +49,36 @@ public class DirectionalTile extends Tile {
 		boolean dr = d && r && transitionsTo(level.getBg(tx + 1, ty + 1));
 		
 		if(ul && !ur && !dl && !dr)
-			render(TOP_CORNER_LEFT_MISSING, x, y);
+			render(screen, TOP_CORNER_LEFT_MISSING, x, y);
 		else if(ur && !ul && !dl && !dr)
-			render(TOP_CORNER_RIGHT_MISSING, x, y);
+			render(screen, TOP_CORNER_RIGHT_MISSING, x, y);
 		else if(dl && !ul && !ur && !dr)
-			render(BOTTOM_CORNER_LEFT_MISSING, x, y);
+			render(screen, BOTTOM_CORNER_LEFT_MISSING, x, y);
 		else if(dr && !ul && !ur && !dl)
-			render(BOTTOM_CORNER_RIGHT_MISSING, x, y);
+			render(screen, BOTTOM_CORNER_RIGHT_MISSING, x, y);
 		else {
 			if(u && d && l && !r)
-				render(RIGHT_EDGE, x, y);
+				render(screen, RIGHT_EDGE, x, y);
 			else if(u && d && r && !l)
-				render(LEFT_EDGE, x, y);
+				render(screen, LEFT_EDGE, x, y);
 			else if(l && r && u && !d)
-				render(BOTTOM_EDGE, x, y);
+				render(screen, BOTTOM_EDGE, x, y);
 			else if(l && r && !u && d)
-				render(TOP_EDGE, x, y);
+				render(screen, TOP_EDGE, x, y);
 			else if(u && r && !d && !l)
-				render(BOTTOM_CORNER_LEFT, x, y);
+				render(screen, BOTTOM_CORNER_LEFT, x, y);
 			else if(u && l && !d && !r)
-				render(BOTTOM_CORNER_RIGHT, x, y);
+				render(screen, BOTTOM_CORNER_RIGHT, x, y);
 			else if(d && l && !u && !r)
-				render(TOP_CORNER_RIGHT, x, y);
+				render(screen, TOP_CORNER_RIGHT, x, y);
 			else if(d && r && !u && !l)
-				render(TOP_CORNER_LEFT, x, y);
+				render(screen, TOP_CORNER_LEFT, x, y);
 			else
-				render(CENTER, x, y);
+				render(screen, CENTER, x, y);
 		}
 	}
 	
-	public void render(Rectangle rect, int x, int y) {
-		Renderer.renderTextureSubrectangle(texture, rect, x, y);
+	public void render(Screen screen, Rectangle rect, int x, int y) {
+		screen.renderSubTexture(texture, rect, x, y);
 	}
 }

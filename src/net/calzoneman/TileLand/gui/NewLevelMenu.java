@@ -2,8 +2,7 @@ package net.calzoneman.TileLand.gui;
 
 import org.lwjgl.opengl.Display;
 
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.util.Delegate;
 
 public class NewLevelMenu extends GUIMenu {
@@ -21,7 +20,7 @@ public class NewLevelMenu extends GUIMenu {
 		int x1 = 175;
 		int x2 = x1 + 100;
 		int curY = 145;
-		int charHeight = Renderer.getFont().getHeight("|");
+		int charHeight = Font.getHeight("|");
 		
 		GUITextbox plyNameTxt = new GUITextbox(x2, curY, 190, "Player");
 		plyNameTxt.setMaxLength(32);
@@ -138,28 +137,28 @@ public class NewLevelMenu extends GUIMenu {
 			w = Integer.parseInt(((GUITextbox) container.getChild("lvlwidthtxt")).getText());
 		}
 		catch(Exception ex) {
-			((GUILabel) container.getChild("widtherror")).setText(TilelandFont.TEXT_DARK_RED + "Invalid level width");
+			((GUILabel) container.getChild("widtherror")).setText(Font.TEXT_DARK_RED + "Invalid level width");
 			error = true;
 		}
 		try {
 			h = Integer.parseInt(((GUITextbox) container.getChild("lvlheighttxt")).getText());
 		}
 		catch(Exception ex) {
-			((GUILabel) container.getChild("heighterror")).setText(TilelandFont.TEXT_DARK_RED + "Invalid level height");
+			((GUILabel) container.getChild("heighterror")).setText(Font.TEXT_DARK_RED + "Invalid level height");
 			error = true;
 		}
 		lvlName = ((GUITextbox) container.getChild("lvlnametxt")).getText();
 		if(lvlName.isEmpty()) {
-			((GUILabel) container.getChild("levelnameerror")).setText(TilelandFont.TEXT_DARK_RED + "Invalid level name");
+			((GUILabel) container.getChild("levelnameerror")).setText(Font.TEXT_DARK_RED + "Invalid level name");
 			error = true;
 		}
 		plyName = ((GUITextbox) container.getChild("plynametxt")).getText();
 		if(w < 0) {
-			((GUILabel) container.getChild("widtherror")).setText(TilelandFont.TEXT_DARK_RED + "Invalid level width");
+			((GUILabel) container.getChild("widtherror")).setText(Font.TEXT_DARK_RED + "Invalid level width");
 			error = true;
 		}
 		if(h < 0) {
-			((GUILabel) container.getChild("heighterror")).setText(TilelandFont.TEXT_DARK_RED + "Invalid level height");
+			((GUILabel) container.getChild("heighterror")).setText(Font.TEXT_DARK_RED + "Invalid level height");
 			error = true;
 		}
 		gameParameters = new GameParameters(w, h, lvlName, plyName);

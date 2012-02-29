@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.calzoneman.TileLand.gfx.Screen;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -130,11 +132,11 @@ public class GUIContainer extends GUIComponent {
 	 * By default, calls render() on each component
 	 * @see net.calzoneman.TileLand.gui.GUIComponent#render()
 	 */
-	public void render() {
+	public void render(Screen screen) {
 		if(background != null)
-			background.render();
+			background.render(screen);
 		for(GUIComponent comp : children.values()) {
-			comp.render();
+			comp.render(screen);
 		}
 		
 	}

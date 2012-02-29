@@ -3,6 +3,7 @@ package net.calzoneman.TileLand.screen;
 import org.lwjgl.input.Mouse;
 
 import net.calzoneman.TileLand.Game;
+import net.calzoneman.TileLand.gfx.Screen;
 
 public abstract class GameScreen {
 	/** The Game* that this screen is a child of 
@@ -68,7 +69,7 @@ public abstract class GameScreen {
 	/**
 	 * Renders the screen
 	 */
-	public abstract void render();
+	public abstract void render(Screen screen);
 	
 	/**
 	 * Reads user input from the Mouse and/or Keyboard and updates appropriately

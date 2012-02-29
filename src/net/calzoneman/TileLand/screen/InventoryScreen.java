@@ -5,7 +5,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.gui.GUIButton;
 import net.calzoneman.TileLand.gui.MenuManager;
 import net.calzoneman.TileLand.inventory.ItemStack;
@@ -20,26 +20,19 @@ public class InventoryScreen extends GameScreen {
 	private GUIButton saveButton;
 	private GUIButton quitButton;
 	
-	//private boolean[] oldmouse;
-	//private boolean[] mouse;
-	//private boolean[] keys;
-	
 	public InventoryScreen() {
 		this(10, 57, 10 * Tile.TILESIZE + 11 * SLOT_PADDING, 3 * Tile.TILESIZE + 4 * SLOT_PADDING);
 	}
 
 	public InventoryScreen(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		//this.keys = new boolean[256]; // Keyboard.getKeyCount() seems to have issues...
-		//this.mouse = new boolean[Mouse.getButtonCount()];
-		//this.oldmouse = new boolean[Mouse.getButtonCount()];
 		this.saveButton = new GUIButton(Display.getWidth()-150, Display.getHeight()-120, 100, "Save");
 		this.quitButton = new GUIButton(Display.getWidth()-150, Display.getHeight()-80, 100, "Quit");
 	}
 	
 	@Override
 	public void handleInput() {
-		PlayerInventory inv = parent.getPlayer().getPlayerInventory();
+		PlayerInventory inv = parent.getPlayer().getInventory();
 		boolean[] oldmouse = mouse.clone();
 		while(Mouse.next()) {
 			// Update mouse button state
@@ -157,20 +150,20 @@ public class InventoryScreen extends GameScreen {
 	}
 
 	@Override
-	public void render() {
-		PlayerInventory inv = parent.getPlayer().getPlayerInventory();
+	public void render(Screen screen) {
+		PlayerInventory inv = parent.getPlayer().getInventory();
 		
 		// Draw the background
-		Renderer.renderFilledRect(this.x, this.y, this.width, this.height, barBgColor);
+		screen.renderFilledRect(this.x, this.y, this.width, this.height, barBgColor);
 		for(int j = 0; j < 3; j++) {
 			for(int i = 0; i < 10; i++) {
 				int x = this.x + SLOT_PADDING*(i+1) + i*Tile.TILESIZE;
 				int y = this.y + SLOT_PADDING*(j+1) + (j)*Tile.TILESIZE;
 				// Draw the slot background
-				Renderer.renderFilledRect(x, y, Tile.TILESIZE, Tile.TILESIZE, slotBgColor);
+				screen.renderFilledRect(x, y, Tile.TILESIZE, Tile.TILESIZE, slotBgColor);
 				// Draw the contents (where applicable)
 				if(inv.getItemStack((j+1) * 10 + i) != null)
-					inv.getItemStack((j+1) * 10 + i).render(x, y);
+					inv.getItemStack((j+1) * 10 + i).render(screen, x, y);
 			}
 		}
 		
@@ -192,13 +185,13 @@ public class InventoryScreen extends GameScreen {
 			// Calculate rounded mouse position
 			mx = (i+1) * SLOT_PADDING + i*Tile.TILESIZE;
 			my = (j+1) * SLOT_PADDING + j*Tile.TILESIZE;
-			Renderer.renderRect(mx + offX, my + offY, Tile.TILESIZE, Tile.TILESIZE, Color.blue);
+			screen.renderRect(mx + offX, my + offY, Tile.TILESIZE, Tile.TILESIZE, Color.blue);
 		}
 		if(selected != null)
-			selected.render(Mouse.getX(), Display.getHeight() - Mouse.getY());
+			selected.render(screen, Mouse.getX(), Display.getHeight() - Mouse.getY());
 		
-		saveButton.render();
-		quitButton.render();
+		saveButton.render(screen);
+		quitButton.render(screen);
 	}
 
 }

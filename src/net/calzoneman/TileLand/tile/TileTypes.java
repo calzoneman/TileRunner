@@ -14,6 +14,7 @@ public class TileTypes {
 	private static HashMap<Integer, Tile> tileTypes;
 	/** A Dictionary of Tile IDs keyed by name */
 	private static HashMap<String, Integer> tileNames;
+	public static Fog fog;
 
 	public static void init(SpriteSheet sheet) {
 		// Initialize Tile type Dictionary
@@ -24,6 +25,7 @@ public class TileTypes {
 
 		// Initialize Tile types
 		try {
+			fog = new Fog(FOG, "fog", sheet.getCustomTileTexture(5, 6, 5, 3));
 			addTile(new Tile(AIR, "air"));
 			addTile(new Tile(NULL, "null", sheet.getTileTexture(9 * sheet.width)));
 			addTile(new DirtTile(DIRT, "dirt", sheet.getCustomTileTexture(0, 0, 5, 3)));

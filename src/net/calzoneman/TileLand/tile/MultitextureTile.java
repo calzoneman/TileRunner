@@ -3,7 +3,7 @@ package net.calzoneman.TileLand.tile;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.level.Level;
 
 import org.newdawn.slick.geom.Rectangle;
@@ -29,14 +29,14 @@ public class MultitextureTile extends Tile {
 	}
 	
 	@Override
-	public void render(Level level, int tx, int ty, int x, int y) {
+	public void render(Screen screen, Level level, int tx, int ty, int x, int y) {
 		int data = 0;
 		if(level != null)
 			data = isForeground() ? level.getFgData(tx, ty) : level.getBgData(tx, ty);
-		render(x, y, data);		
+		render(screen, x, y, data);		
 	}
 	
-	public void render(int x, int y, int data) {
+	public void render(Screen screen, int x, int y, int data) {
 		Rectangle state = states.get(data);
 		if(state == null)
 			state = states.get(0);
@@ -44,7 +44,7 @@ public class MultitextureTile extends Tile {
 			System.out.println("nullstate");
 			return;
 		}
-		Renderer.renderTextureSubrectangle(texture, state, x, y);
+		screen.renderSubTexture(texture, state, x, y);
 	}
 
 }

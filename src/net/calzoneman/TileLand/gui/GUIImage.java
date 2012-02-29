@@ -1,6 +1,6 @@
 package net.calzoneman.TileLand.gui;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 
 import org.newdawn.slick.opengl.Texture;
 
@@ -13,8 +13,8 @@ public class GUIImage extends GUIComponent {
 	}
 
 	@Override
-	public void render() {
-		Renderer.renderTexture(texture, x, y, width, height);
+	public void render(Screen screen) {
+		screen.renderTexture(texture, x, y, width, height, false, false);
 	}
 
 }

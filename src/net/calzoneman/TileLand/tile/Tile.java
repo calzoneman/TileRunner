@@ -3,8 +3,8 @@ package net.calzoneman.TileLand.tile;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.inventory.Item;
+import net.calzoneman.TileLand.entity.Mob;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.inventory.TileItem;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.player.Player;
@@ -53,17 +53,21 @@ public class Tile {
 		return false;
 	}
 
-	public void hit(Level level, Player player, Item with, int tx, int ty) {
+	public void hit(Level level, Player player, int tx, int ty) {
 		int data = isForeground() ? level.getFgData(tx, ty) : level.getBgData(tx, ty);
 		if(isForeground())
 			level.setFgId(tx, ty, TypeId.AIR);
 		else
 			level.setBgId(tx, ty, TypeId.DIRT);
-		player.getPlayerInventory().addItem(new TileItem(this, data));
+		player.getInventory().addItem(new TileItem(this, data));
+	}
+	
+	public void collide(Level level, Mob mob, int tx, int ty) {
+		
 	}
 
-	public void render(Level level, int tx, int ty, int x, int y) {
-		Renderer.renderTexture(texture, x, y);
+	public void render(Screen screen, Level level, int tx, int ty, int x, int y) {
+		screen.renderTexture(texture, x, y);
 	}
 
 	public boolean isSolid() {

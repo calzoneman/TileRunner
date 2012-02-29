@@ -2,7 +2,7 @@ package net.calzoneman.TileLand.inventory;
 
 import org.newdawn.slick.Color;
 
-import net.calzoneman.TileLand.gfx.Renderer;
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.tile.Tile;
 
 public class Quickbar {
@@ -91,20 +91,20 @@ public class Quickbar {
 		return QUICKBAR_COUNT;
 	}
 
-	public void render() {
+	public void render(Screen screen) {
 		// Draw the quickbar's background
-		Renderer.renderFilledRect(this.x, this.y, this.width, this.height, barBgColor);
+		screen.renderFilledRect(this.x, this.y, this.width, this.height, barBgColor);
 		for(int i = 0; i < QUICKBAR_COUNT; i++) {
 			int x = this.x + SLOT_PADDING*(i+1) + i*Tile.TILESIZE;
 			int y = this.y + SLOT_PADDING;
 			// Draw the slot background
-			Renderer.renderFilledRect(x, y, Tile.TILESIZE, Tile.TILESIZE, slotBgColor);
+			screen.renderFilledRect(x, y, Tile.TILESIZE, Tile.TILESIZE, slotBgColor);
 			// Draw the contents (where applicable)
 			if(contents[i] != null)
-				contents[i].render(x, y);
+				contents[i].render(screen, x, y);
 			// Draw the selection border
 			if(i == selected)
-				Renderer.renderRect(x, y, Tile.TILESIZE, Tile.TILESIZE, Color.green);
+				screen.renderRect(x, y, Tile.TILESIZE, Tile.TILESIZE, Color.green);
 		}
 	}
 }

@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.calzoneman.TileLand.TileLand;
 import net.calzoneman.TileLand.event.EventManager;
-import net.calzoneman.TileLand.gfx.Renderer;
-import net.calzoneman.TileLand.gfx.TilelandFont;
+import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.gui.GUITextbox;
 import net.calzoneman.TileLand.util.KeyValuePair;
 
@@ -45,13 +44,12 @@ public class ChatScreen extends GameScreen {
 	private void addMessage(String msg) {
 		if(msg.isEmpty())
 			return;
-		TilelandFont fnt = TileLand.getResourceManager().getPreferredFont();
 		ArrayList<String> result = new ArrayList<String>();
 		String temp = "";
-		while(fnt.getWidth(msg) > width - 10) {
+		while(Font.getWidth(msg) > width - 10) {
 			temp = msg.substring(msg.length() - 1) + temp;
 			msg = msg.substring(0, msg.length() - 1);
-			if(fnt.getWidth(temp) > width - 10) {
+			if(Font.getWidth(temp) > width - 10) {
 				result.add("> " + temp);
 				temp = "";
 			}
@@ -75,22 +73,21 @@ public class ChatScreen extends GameScreen {
 	}
 
 	@Override
-	public void render() {
+	public void render(Screen screen) {
 		if(active)
-			Renderer.renderFilledRect(x, y, width, height, background);
-		TilelandFont fnt = TileLand.getResourceManager().getPreferredFont();
+			screen.renderFilledRect(x, y, width, height, background);
 		ListIterator<KeyValuePair<Long, String>> itr = chatHistory.listIterator(chatHistory.size());
 		int curY = y + height - GUITextbox.TEXTBOX_HEIGHT - 2;
 		while(itr.hasPrevious()) {
 			KeyValuePair<Long, String> msg = itr.previous();
 			if(!active && System.nanoTime() > msg.key() + CHAT_VISIBILITY_DELAY)
 				continue;
-			curY -= fnt.getHeight(msg.value());
-			fnt.drawString(x + PADDING_X - 1, curY + 1, TilelandFont.TEXT_BLACK + TilelandFont.stripColor(msg.value()), transparent);
-			fnt.drawString(x + PADDING_X, curY, msg.value(), transparent);
+			curY -= Font.getHeight(msg.value());
+			Font.draw(Font.TEXT_BLACK + Font.stripColor(msg.value()), screen, x + PADDING_X - 1, curY + 1);
+			Font.draw(msg.value(), screen, x + PADDING_X, curY);
 		}
 		if(active)
-			inputBox.render();
+			inputBox.render(screen);
 	}
 	
 
@@ -104,7 +101,7 @@ public class ChatScreen extends GameScreen {
 			}
 			if(keys[Keyboard.KEY_RETURN]) {
 				if(!parent.isMultiplayer())
-					addMessage(parent.getPlayer().getName() + TilelandFont.TEXT_WHITE + ": " + inputBox.getText());
+					addMessage(parent.getPlayer().getName() + Font.TEXT_WHITE + ": " + inputBox.getText());
 				EventManager.manager.onPlayerChat(parent, inputBox.getText());
 				inputBox.setText("");
 				active = false;

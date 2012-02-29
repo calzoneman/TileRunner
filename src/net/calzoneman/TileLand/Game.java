@@ -3,6 +3,7 @@ package net.calzoneman.TileLand;
 
 import org.lwjgl.opengl.Display;
 
+import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.player.Player;
 import net.calzoneman.TileLand.screen.ChatScreen;
 import net.calzoneman.TileLand.screen.GameScreen;
@@ -71,11 +72,11 @@ public class Game {
 		}
 	}
 
-	public void render() {
-		mainScreen.render();
-		chatScreen.render();
+	public void render(Screen screen) {
+		mainScreen.render(screen);
+		chatScreen.render(screen);
 		if(currentScreen != null && currentScreen.isActive())
-			currentScreen.render();
+			currentScreen.render(screen);
 	}
 	
 	public Player getPlayer() {

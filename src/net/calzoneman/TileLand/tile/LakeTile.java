@@ -1,6 +1,5 @@
 package net.calzoneman.TileLand.tile;
 
-import net.calzoneman.TileLand.inventory.Item;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.player.Player;
 
@@ -24,7 +23,7 @@ public class LakeTile extends DirectionalTile {
 	}
 	
 	@Override
-	public void hit(Level level, Player ply, Item with, int tx, int ty) {
+	public void hit(Level level, Player ply, int tx, int ty) {
 		return;
 	}
 }

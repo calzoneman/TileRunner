@@ -1,195 +1,75 @@
 package net.calzoneman.TileLand;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import net.calzoneman.TileLand.gfx.SpriteSheet;
-import net.calzoneman.TileLand.gfx.TilelandFont;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
+@SuppressWarnings("unchecked")
 public class ResourceManager {
-	private HashMap<String, Texture> textures;
-	private HashMap<String, SpriteSheet> tileSpritesheets;
-	private HashMap<String, TilelandFont> fonts;
-	private TilelandFont preferredFont = null;
-	private Texture preferredTiles = null;
-	private Texture preferredPlayer = null;
-	final String[] textureFormats = { "PNG", "TGA" };
-	final String[] fontFormats = { "TTF" };
 	
-	public ResourceManager() {
-		/*textures = new HashMap<String, Texture>();
+	public static Texture GUI_BUTTON_TEXTURE;
+	public static Texture GUI_TEXTBOX_TEXTURE;
+	public static Texture PLAYER_TEXTURE;
+	public static Texture TITLE_TEXTURE;
+	public static SpriteSheet TILESHEET;
+	public static UnicodeFont FONT;
+	public static UnicodeFont FONT_LARGE;
+	
+	static {
 		try {
-			textures.put("res/title.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/title.png")));
-			textures.put("res/player/default.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/player/default.png")));
-			textures.put("res/gui/button.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/gui/button.png")));
-			textures.put("res/gui/textbox.png", TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/gui/textbox.png")));
-		} 
+			GUI_BUTTON_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/gui_button.png"));
+		}
 		catch (IOException e) {
 			e.printStackTrace();
-		}*/
-		this("res");
-	}
-	
-	public ResourceManager(String sourcefolder) {
-		textures = new HashMap<String, Texture>();
-		tileSpritesheets = new HashMap<String, SpriteSheet>();
-		fonts = new HashMap<String, TilelandFont>();
-		processFolder(sourcefolder, true);
-		dump();
-	}
-	
-	public void processFolder(String folder, boolean recursive) {
-		File src = new File(folder);
-		for(File f : src.listFiles()) {
-			if(f.isDirectory() && recursive)
-				processFolder(f.getPath(), true);
-			else if(f.isFile()) {
-				String fmt = "";
-				if(!f.getName().contains("."))
-					continue;
-				fmt = f.getName().substring(f.getName().lastIndexOf(".") + 1);
-				if(isTexture(fmt))
-					loadTexture(f, fmt);
-				else if(isFont(fmt))
-					loadFont(f);
-			}
 		}
-	}
-	
-	public boolean loadTexture(File f, String fmt) {
 		try {
-			Texture t = TextureLoader.getTexture(fmt, ResourceLoader.getResourceAsStream(f.getPath()));
-			textures.put(f.getPath().replace('\\', '/'), t);
-			System.out.println("INFO: Loaded texture from " + f.getName());
-			return true;
+			GUI_TEXTBOX_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/gui_textbox.png"));
 		}
-		catch(Exception e) {
-			System.out.println("WARNING: Failed to load texture from " + f.getName() + " (Parsed format: " + fmt + ")");
+		catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean loadFont(File f) {
 		try {
-			UnicodeFont fnt = new UnicodeFont(f.getPath(), 8, false, false);
-			fnt.addAsciiGlyphs();
-			fnt.getEffects().add(new ColorEffect()); // For some reason you have to add an effect...
-			fnt.loadGlyphs();
-			fonts.put(f.getPath().replace('\\', '/'), new TilelandFont(fnt));
-			System.out.println("INFO: Loaded font from " + f.getName());
-			return true;
-		} 
-		catch (SlickException e) {
-			System.out.println("Unable to load font: " + f.getName());
-			return false;
+			PLAYER_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/player.png"));
 		}
-	}
-	
-	public HashMap<String, Texture> getTextures(String path) {
-		HashMap<String, Texture> result = new HashMap<String, Texture>();
-		for(String key : textures.keySet()) {
-			if (key.startsWith(path)) {
-				result.put(key, getTexture(key));
-			}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
-		return result;
-	}
-	
-	public Texture getPreferredTiles() {
-		if(preferredTiles == null)
-			return getTexture("res/tiles/default.png");
-		return preferredTiles;
-	}
-	
-	public void setPreferredTiles(String preferredTiles) {
-		this.preferredTiles = getTexture(preferredTiles);
-	}
-	
-	public Texture getPreferredPlayer() {
-		if(preferredPlayer == null)
-			return getTexture("res/player/default.png");
-		return preferredPlayer;
-	}
-	
-	public void setPreferredPlayer(String preferredPlayer) {
-		this.preferredPlayer = getTexture(preferredPlayer);
-	}
-	
-	public TilelandFont getPreferredFont() {
-		if(preferredFont == null)
-			return getDefaultFont();
-		return preferredFont;
-	}
-	
-	public void setPreferredFont(String preferredFont) {
-		this.preferredFont = getFont(preferredFont);
-	}
-
-	public TilelandFont getDefaultFont() {
-		return fonts.get("res/font/default.ttf");
-	}
-	
-	public TilelandFont getFont(String name) {
-		return fonts.get(name);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public TilelandFont getFont(String name, int pt) {
-		if(fonts.containsKey(name + "@" + pt))
-			return fonts.get(name + "@" + pt);
-		else {
-			try {
-				UnicodeFont fnt = new UnicodeFont(name, pt, false, false);
-				fnt.addAsciiGlyphs();
-				fnt.getEffects().add(new ColorEffect()); // For some reason you have to add an effect...
-				fnt.loadGlyphs();
-				TilelandFont tf = new TilelandFont(fnt);
-				fonts.put(name + "@" + pt, tf);
-				return tf;
-			} 
-			catch (SlickException e) {
-				return getDefaultFont();
-			}
+		try {
+			TITLE_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/title.png"));
 		}
-	}
-	
-	public Texture getTexture(String name) {
-		return textures.get(name);
-	}
-	
-	public boolean isTexture(String fmt) {
-		fmt = fmt.toUpperCase();
-		for(String valid : textureFormats)
-			if(valid.equals(fmt))
-				return true;
-		return false;
-	}
-	
-	public boolean isFont(String fmt) {
-		fmt = fmt.toUpperCase();
-		for(String valid : fontFormats)
-			if(valid.equals(fmt))
-				return true;
-		return false;
-	}
-	
-	public void dump() {
-		for(String key : textures.keySet()) {
-			System.out.println(key + " => " + textures.get(key));
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			TILESHEET = new SpriteSheet(ResourceManager.class.getResourceAsStream("/tiles.png"), 32);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		for(String key : fonts.keySet()) {
-			System.out.println(key + " => " + fonts.get(key));
+		try {
+			FONT = new UnicodeFont(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, ResourceManager.class.getResourceAsStream("/font.ttf")), 8, false, false);
+			FONT.addAsciiGlyphs();
+			FONT.getEffects().add(new ColorEffect()); // For some reason you have to add an effect...
+			FONT.loadGlyphs();
+			
+			FONT_LARGE = new UnicodeFont(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, ResourceManager.class.getResourceAsStream("/font.ttf")), 16, false, false);
+			FONT_LARGE.addAsciiGlyphs();
+			FONT_LARGE.getEffects().add(new ColorEffect()); // For some reason you have to add an effect...
+			FONT_LARGE.loadGlyphs();
+		} 
+		catch (SlickException e) {
+			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
+
 }
