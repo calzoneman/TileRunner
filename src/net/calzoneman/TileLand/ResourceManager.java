@@ -15,6 +15,7 @@ public class ResourceManager {
 	
 	public static Texture GUI_BUTTON_TEXTURE;
 	public static Texture GUI_TEXTBOX_TEXTURE;
+	public static Texture GUI_CHECKBOX_TEXTURE;
 	public static Texture PLAYER_TEXTURE;
 	public static Texture TITLE_TEXTURE;
 	public static SpriteSheet TILESHEET;
@@ -30,6 +31,12 @@ public class ResourceManager {
 		}
 		try {
 			GUI_TEXTBOX_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/gui_textbox.png"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			GUI_CHECKBOX_TEXTURE = TextureLoader.getTexture("PNG", ResourceManager.class.getResourceAsStream("/gui_checkbox.png"));
 		}
 		catch (IOException e) {
 			e.printStackTrace();

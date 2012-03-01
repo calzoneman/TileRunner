@@ -41,7 +41,7 @@ public class MenuManager {
 			}
 			else if(currentMenu instanceof LoadLevelMenu) {
 				LoadLevelMenu llm = (LoadLevelMenu) currentMenu;
-				currentMenu = new SingleplayerGame(llm.getLevelName(), llm.getPlayerName());
+				currentMenu = new SingleplayerGame(llm.getLevelName(), llm.getPlayerName(), llm.getEditMode());
 			}
 			old = new MainMenu();
 			parentMenus = new Stack<GUIMenu>(); // Reset the menu Stack

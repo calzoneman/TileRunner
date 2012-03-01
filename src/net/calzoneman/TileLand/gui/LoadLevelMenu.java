@@ -11,6 +11,7 @@ public class LoadLevelMenu extends GUIMenu {
 	
 	private String levelName;
 	private String playerName;
+	private boolean editMode;
 	
 	public LoadLevelMenu() {
 		super();
@@ -38,6 +39,12 @@ public class LoadLevelMenu extends GUIMenu {
 		GUILabel lvlNameLbl = new GUILabel(x1, curY + lvlNameTxt.getHeight()/2 - charHeight/2, "Level name");
 		container.addChild("lvlnamelbl", lvlNameLbl);
 		curY += lvlNameTxt.getHeight() + 10;
+		
+		GUICheckbox editCheck = new GUICheckbox(x2, curY);
+		container.addChild("editcheck", editCheck);
+		GUILabel editLbl = new GUILabel(x1, curY + editCheck.getHeight() / 2 - charHeight / 2, "Edit Mode");
+		container.addChild("editlbl", editLbl);
+		curY += editCheck.getHeight() + 10;
 		
 		GUIButton cancelBtn = new GUIButton(x1, curY, 135, "Cancel");
 		cancelBtn.setClickHandler(
@@ -93,6 +100,10 @@ public class LoadLevelMenu extends GUIMenu {
 	public String getLevelName() {
 		return this.levelName;
 	}
+	
+	public boolean getEditMode() {
+		return this.editMode;
+	}
 
 	protected void loadLevel() {
 		GUIContainer container = (GUIContainer) getChild("container");
@@ -100,6 +111,7 @@ public class LoadLevelMenu extends GUIMenu {
 		String lvlName = "";
 		plyName = ((GUITextbox) container.getChild("plynametxt")).getText();
 		lvlName = ((GUITextbox) container.getChild("lvlnametxt")).getText();
+		boolean edit = ((GUICheckbox) container.getChild("editcheck")).isChecked();
 		
 		if(!lvlName.endsWith(".tl"))
 			lvlName += ".tl";
@@ -109,6 +121,7 @@ public class LoadLevelMenu extends GUIMenu {
 		else {
 			this.levelName = lvlName;
 			this.playerName = plyName;
+			this.editMode = edit;
 			MenuManager.getMenuManager().openMenu("singleplayergame");
 		}
 	}

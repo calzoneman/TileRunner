@@ -44,6 +44,7 @@ public class Level {
 	public boolean initialized = false;
 	
 	private List<Entity> entities;
+	private long tickCount = 0;
 	
 	/**
 	 * Constructor - Generates a new Level with the specified width and height
@@ -188,12 +189,8 @@ public class Level {
 	}
 	
 	public void render(Screen screen, Player player, int offX, int offY, int maxWidth, int maxHeight) {
-		int lampRadius = Player.LAMP_RADIUS;
-		int px = player.getTilePosition().x;
-		int py = player.getTilePosition().y;
 		for(int i = offX; i < offX + maxWidth; i++) {
 			for(int j = offY; j < offY + maxHeight; j++) {
-				//System.out.println("Drawing tile at " + i + ", " + j);
 				Tile bg = getBg(i, j);
 				if(bg != null) {
 					bg.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
@@ -203,17 +200,30 @@ public class Level {
 				if(fg != null && fg.id != -1) {
 					fg.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
 				}
-				if((i - px)*(i - px) + (j - py) * (j - py) <= lampRadius)
-					screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, lampColor);
-				else {
-					screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, fogColor);
-					if(!visited(i, j))
-						TileTypes.fog.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
-				}
 			}
 		}
 		renderEntities(screen, offX, offY, maxWidth, maxHeight);
 	}
+	
+	public void renderFog(Screen screen, Player player, int offX, int offY, int maxWidth, int maxHeight) {
+		int lampRadius = Player.LAMP_RADIUS;
+		int px = player.getTilePosition().x;
+		int py = player.getTilePosition().y;
+		for(int i = offX; i < offX + maxWidth; i++) {
+			for(int j = offY; j < offY + maxHeight; j++) {
+				if((i - px)*(i - px) + (j - py) * (j - py) <= lampRadius*lampRadius)
+					screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, lampColor);
+				else {
+					if(!visited(i, j))
+						TileTypes.fog.render(screen, this, i, j, (i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE);
+					else
+						screen.renderFilledRect((i - offX) * Tile.TILESIZE, (j - offY) * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, fogColor);
+				}
+			}
+		}
+	}
+	
+	
 	
 	private void renderEntities(Screen screen, int offX, int offY, int maxWidth, int maxHeight) {
 		for(Entity ent : entities) {
@@ -223,6 +233,13 @@ public class Level {
 				ent.render(screen, this, pos.x - offX * Tile.TILESIZE, pos.y - offY * Tile.TILESIZE);
 			}
 		}
+	}
+	
+	public void tick() {
+		for(Entity ent : entities) {
+			ent.think(this, tickCount);
+		}
+		tickCount++;
 	}
 	
 	// Tile getters/setters

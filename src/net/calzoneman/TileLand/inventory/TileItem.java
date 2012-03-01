@@ -7,6 +7,10 @@ import net.calzoneman.TileLand.tile.Tile;
 public class TileItem extends Item {
 	
 	protected Tile tile;
+	
+	public TileItem(Tile tile) {
+		this(tile, 0);
+	}
 
 	public TileItem(Tile tile, int data) {
 		super(tile.id, tile.name, null, data);

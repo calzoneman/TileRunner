@@ -8,8 +8,8 @@ import org.newdawn.slick.Color;
 import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.gui.GUIButton;
 import net.calzoneman.TileLand.gui.MenuManager;
+import net.calzoneman.TileLand.inventory.Inventory;
 import net.calzoneman.TileLand.inventory.ItemStack;
-import net.calzoneman.TileLand.inventory.PlayerInventory;
 import net.calzoneman.TileLand.tile.Tile;
 
 public class InventoryScreen extends GameScreen {
@@ -32,7 +32,7 @@ public class InventoryScreen extends GameScreen {
 	
 	@Override
 	public void handleInput() {
-		PlayerInventory inv = parent.getPlayer().getInventory();
+		Inventory inv = parent.getPlayer().getInventory();
 		boolean[] oldmouse = mouse.clone();
 		while(Mouse.next()) {
 			// Update mouse button state
@@ -80,8 +80,6 @@ public class InventoryScreen extends GameScreen {
 			int offX = this.x;
 			int offY = this.y;
 			mx -= offX;
-			if(my < this.y)
-				offY = inv.getQuickbar().getY();
 			my -= offY;
 			
 			// Calculate slot position
@@ -151,7 +149,7 @@ public class InventoryScreen extends GameScreen {
 
 	@Override
 	public void render(Screen screen) {
-		PlayerInventory inv = parent.getPlayer().getInventory();
+		Inventory inv = parent.getPlayer().getInventory();
 		
 		// Draw the background
 		screen.renderFilledRect(this.x, this.y, this.width, this.height, barBgColor);
@@ -173,8 +171,6 @@ public class InventoryScreen extends GameScreen {
 		int mx = Mouse.getX();
 		mx -= offX;
 		int my = (Display.getHeight() - Mouse.getY());
-		if(my < this.y)
-			offY = inv.getQuickbar().getY();
 		my -= offY;
 		
 		// Calculate slot position

@@ -3,6 +3,7 @@ package net.calzoneman.TileLand.gui;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 
+import net.calzoneman.TileLand.EditModeGame;
 import net.calzoneman.TileLand.Game;
 import net.calzoneman.TileLand.ResourceManager;
 import net.calzoneman.TileLand.gfx.Font;
@@ -11,6 +12,7 @@ import net.calzoneman.TileLand.gui.NewLevelMenu.GameParameters;
 import net.calzoneman.TileLand.level.BasicLevelGenerator;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.player.Player;
+import net.calzoneman.TileLand.player.EditModePlayer;
 
 public class SingleplayerGame extends GUIMenu {
 		
@@ -22,17 +24,24 @@ public class SingleplayerGame extends GUIMenu {
 			gp = GameParameters.defaultGameParameters;
 		Level lvl = new BasicLevelGenerator().generate(gp.width, gp.height);
 		lvl.setName(gp.levelName);
-		Player ply = new Player(ResourceManager.PLAYER_TEXTURE, lvl, gp.playerName);
-		game = new Game(ply);
+		Player ply = gp.editMode ? new EditModePlayer(ResourceManager.PLAYER_TEXTURE, lvl, gp.playerName) : new Player(ResourceManager.PLAYER_TEXTURE, lvl, gp.playerName);
+		game = gp.editMode ? new EditModeGame(ply) : new Game(ply);
 	}
 	
-	public SingleplayerGame(String lvlName, String playerName) {
+	public SingleplayerGame(String lvlName, String playerName, boolean editMode) {
 		Level lvl = new Level(lvlName);
 		levelError = !lvl.initialized;
 		if(levelError)
 			return;
-		Player ply = new Player(ResourceManager.PLAYER_TEXTURE, lvl, playerName);
-		game = new Game(ply);
+		Player ply;
+		if(editMode)
+			ply = new EditModePlayer(ResourceManager.PLAYER_TEXTURE, lvl, playerName);
+		else
+			ply = new Player(ResourceManager.PLAYER_TEXTURE, lvl, playerName);
+		if(editMode)
+			game = new EditModeGame(ply);
+		else
+			game = new Game(ply);
 	}
 	
 	@Override

@@ -65,6 +65,9 @@ public class BasicLevelGenerator extends LevelGenerator {
 					fgTiles[index] = TypeId.TREE;
 					fgData[index] = (byte) rand.nextInt(((MultitextureTile) TileTypes.getTile(TypeId.TREE)).getNumStates());
 				}
+				else if (rand.nextInt(100) < 5 && fgTiles[index] == TypeId.AIR && bgTiles[index] == TypeId.GRASS) {
+					fgTiles[index] = TypeId.POT;
+				}
 			}
 		}
 		treemap = null;

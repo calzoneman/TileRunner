@@ -2,11 +2,13 @@ package net.calzoneman.TileLand.inventory;
 
 public class PlayerInventory extends Inventory {
 	public static final int PLAYER_INVENTORY_COUNT = 40;
-	private Quickbar quickbar;
+	//private Quickbar quickbar;
+	private Tilelist quickbar;
 	
 	public PlayerInventory() {
 		super(PLAYER_INVENTORY_COUNT);
-		this.quickbar = new Quickbar();
+		//this.quickbar = new Quickbar();
+		this.quickbar = new Tilelist();
 	}
 
 	public PlayerInventory(int size) {
@@ -30,7 +32,7 @@ public class PlayerInventory extends Inventory {
 		return super.setItemStack(slot, item);
 	}
 	
-	public Quickbar getQuickbar() {
+	public Tilelist getQuickbar() {
 		return quickbar;
 	}
 

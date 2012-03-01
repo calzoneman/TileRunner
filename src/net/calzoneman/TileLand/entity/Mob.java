@@ -14,15 +14,14 @@ public abstract class Mob extends Entity {
 	protected MobSprite sprite;
 	protected int facing = MobSprite.FACING_DOWN;
 	protected int movedSinceSpriteUpdate = 0;
-	protected Level level;
 	protected final Random rand = new Random();
 	
 	protected int walkSpeed = 3;
 	protected int sprintSpeed = 5;
 
 
-	public Mob(int x, int y, MobSprite sprite) {
-		super(x, y);
+	public Mob(Level level, int x, int y, MobSprite sprite) {
+		super(level, x, y, sprite);
 		this.sprite = sprite;
 	}
 	
@@ -99,24 +98,26 @@ public abstract class Mob extends Entity {
 	}
 	
 	public boolean checkCollision(int x, int y) {
+		if(x < 0 || y < 0)
+			return true;
 		Location[] p = new Location[6];
 		p[0] = new Location(
 				x / POSITIONS_PER_TILE,
 				y / POSITIONS_PER_TILE);
 		p[1] = new Location(
-				(x - sprite.getWidth() / 2 + 2) / POSITIONS_PER_TILE,
+				(x - sprite.getWidth() / 2 + 8) / POSITIONS_PER_TILE,
 				y / POSITIONS_PER_TILE);
 		p[2] = new Location(
-				(x + sprite.getWidth() / 2 - 2) / POSITIONS_PER_TILE,
+				(x + sprite.getWidth() / 2 - 8) / POSITIONS_PER_TILE,
 				y / POSITIONS_PER_TILE);
 		p[3] = new Location(
 				x / POSITIONS_PER_TILE,
 				(y + sprite.getHeight() / 2) / POSITIONS_PER_TILE);
 		p[4] = new Location(
-				(x + sprite.getWidth() / 2 - 2) / POSITIONS_PER_TILE,
+				(x + sprite.getWidth() / 2 - 8) / POSITIONS_PER_TILE,
 				(y + sprite.getHeight() / 2) / POSITIONS_PER_TILE);
 		p[5] = new Location(
-				(x - sprite.getWidth() / 2 + 2) / POSITIONS_PER_TILE,
+				(x - sprite.getWidth() / 2 + 8) / POSITIONS_PER_TILE,
 				(y + sprite.getHeight() / 2) / POSITIONS_PER_TILE);
 		for(Location pos : p) {
 			if(!level.canPass(pos.x, pos.y)) {

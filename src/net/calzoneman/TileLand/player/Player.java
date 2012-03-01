@@ -5,23 +5,26 @@ package net.calzoneman.TileLand.player;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.Color;
 
+import net.calzoneman.TileLand.entity.Entity;
 import net.calzoneman.TileLand.entity.Mob;
 import net.calzoneman.TileLand.gfx.MobSprite;
 import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.gfx.Font;
+import net.calzoneman.TileLand.inventory.Inventory;
 import net.calzoneman.TileLand.inventory.Item;
-import net.calzoneman.TileLand.inventory.ItemStack;
-import net.calzoneman.TileLand.inventory.PlayerInventory;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.level.Location;
 
 public class Player extends Mob {
 	
-	public static final int LAMP_RADIUS = 4;
+	public static final int LAMP_RADIUS = 2;
+	public static final int MAX_STAMINA = 10;
 	
 	/** The name of the Player */
-	private String name;
-	private PlayerInventory inventory;
+	protected String name;
+	protected Inventory inventory;
+	protected Item heldItem;
+	protected int stamina = MAX_STAMINA;
 	
 	/**
 	 * Parameterless constructor
@@ -59,7 +62,9 @@ public class Player extends Mob {
 	 * @param name The name of the Player
 	 */
 	public Player(Texture sprite, Level level, String name) {
-		this(sprite, level, name, level.getSpawnpoint());
+		this(sprite, level, name, 
+				new Location(level.getSpawnpoint().x * Entity.POSITIONS_PER_TILE + Entity.POSITIONS_PER_TILE / 2, 
+						level.getSpawnpoint().y * Entity.POSITIONS_PER_TILE + Entity.POSITIONS_PER_TILE / 2));
 	}
 	
 	/**
@@ -70,11 +75,11 @@ public class Player extends Mob {
 	 * @param position The position of the Player
 	 */
 	public Player(Texture sprite, Level level, String name, Location position) {
-		super(position.x, position.y, new MobSprite(sprite));
+		super(level, position.x, position.y, new MobSprite(sprite));
 		this.setLevel(level);
 		this.setName(name);
 		this.setPosition(position);
-		this.inventory = new PlayerInventory();
+		this.inventory = new Inventory(40);
 	}
 	
 	@Override
@@ -85,7 +90,8 @@ public class Player extends Mob {
 			int py = getTilePosition().y;
 			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
 				for(int j = py - LAMP_RADIUS; j <= py + LAMP_RADIUS; j++) {
-					if((i - px) * (i - px) + (j - py) * (j - py) <= LAMP_RADIUS + rand.nextInt(2) - 1)
+					int r = rand.nextInt(2) - 1;
+					if((i - px) * (i - px) + (j - py) * (j - py) <= (LAMP_RADIUS + r) * (LAMP_RADIUS + r))
 						level.visit(i, j);
 				}
 			}
@@ -95,13 +101,15 @@ public class Player extends Mob {
 	
 	@Override
 	public boolean move(int direction, boolean sprint) {
+		sprint = stamina > 0 ? sprint : false;
 		boolean success = super.move(direction, sprint);
 		if(success) {
 			int px = getTilePosition().x;
 			int py = getTilePosition().y;
 			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
 				for(int j = py - LAMP_RADIUS; j <= py + LAMP_RADIUS; j++) {
-					if((i - px) * (i - px) + (j - py) * (j - py) <= LAMP_RADIUS + rand.nextInt(2) - 1)
+					int r = rand.nextInt(2) - 1;
+					if((i - px) * (i - px) + (j - py) * (j - py) <= (LAMP_RADIUS + r) * (LAMP_RADIUS + r))
 						level.visit(i, j);
 				}
 			}
@@ -120,13 +128,10 @@ public class Player extends Mob {
 	}
 	
 	public Item getHeldItem() {
-		ItemStack it = inventory.getQuickbar().getSelectedItemStack();
-		if(it == null)
-			return null;
-		return it.getItem();
+		return heldItem;
 	}
 	
-	public PlayerInventory getInventory() {
+	public Inventory getInventory() {
 		return this.inventory;
 	}
 
@@ -142,6 +147,12 @@ public class Player extends Mob {
 	@Override
 	public void hit(Level level, Mob hitter, int hitDirection) {
 	
+	}
+
+	@Override
+	public void think(Level level, long ticks) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

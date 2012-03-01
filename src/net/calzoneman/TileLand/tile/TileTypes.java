@@ -15,8 +15,10 @@ public class TileTypes {
 	/** A Dictionary of Tile IDs keyed by name */
 	private static HashMap<String, Integer> tileNames;
 	public static Fog fog;
+	public static SpriteSheet spritesheet;
 
 	public static void init(SpriteSheet sheet) {
+		spritesheet = sheet;
 		// Initialize Tile type Dictionary
 		tileTypes = new HashMap<Integer, Tile>();
 
@@ -39,8 +41,9 @@ public class TileTypes {
 			addTile(new MultitextureForegroundTile(TREE, "tree", sheet.getCustomTileTexture(4, 9, 2, 1)));
 			addTile(new MultitextureForegroundTile(BUSH, "bush", sheet.getCustomTileTexture(6, 9, 1, 1)));
 			addTile(new MultitextureForegroundTile(SIGN, "sign", sheet.getCustomTileTexture(7, 9, 3, 1)));
-			addTile(new MultitextureForegroundTile(ROCK, "rock", sheet.getCustomTileTexture(11, 9, 3, 1)));
+			addTile(new MultitextureForegroundTile(ROCK, "rock", sheet.getCustomTileTexture(11, 9, 1, 1)));
 			addTile(new MountainTile(MOUNTAIN, "mountain", sheet.getCustomTileTexture(0, 3, 3, 3)));
+			addTile(new PotTile(POT, "pot", sheet.getTileTexture(2 + 10 * sheet.width)));
 		} 
 		catch (IOException ex) {
 			Sys.alert("TileLand", "Unable to load tiletypes!");

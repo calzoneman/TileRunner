@@ -3,7 +3,7 @@ package net.calzoneman.TileLand.gfx;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.opengl.Texture;
 
-public class MobSprite {
+public class MobSprite extends Sprite {
 	public static final int FACING_UP = 0;
 	public static final int FACING_RIGHT = 1;
 	public static final int FACING_DOWN = 2;
@@ -12,11 +12,11 @@ public class MobSprite {
 	protected static final int WIDTH = 32;
 	protected static final int HEIGHT = 42;
 	
-	private Texture texture;
 	private int currentX;
 	private int currentY;
 	
 	public MobSprite(Texture tex) {
+		super(tex);
 		this.texture = tex;
 		this.currentX = 0;
 		this.currentY = FACING_DOWN * HEIGHT;

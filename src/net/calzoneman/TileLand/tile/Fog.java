@@ -1,5 +1,6 @@
 package net.calzoneman.TileLand.tile;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.opengl.Texture;
 
@@ -23,6 +24,8 @@ public class Fog extends Tile {
 	public static final Rectangle BOTTOM_CORNER_RIGHT = new Rectangle(2*TILESIZE, 2*TILESIZE, TILESIZE, TILESIZE);
 	public static final Rectangle BOTTOM_CORNER_LEFT_MISSING = new Rectangle(4*TILESIZE, 0, TILESIZE, TILESIZE);
 	public static final Rectangle BOTTOM_CORNER_RIGHT_MISSING = new Rectangle(3*TILESIZE, 0, TILESIZE, TILESIZE);
+	
+	static Color lightFog = new Color(0, 0, 0, 140);
 	
 	public Fog(short id, String name, Texture texture) {
 		super(id, name, texture);
@@ -76,6 +79,8 @@ public class Fog extends Tile {
 	}
 	
 	public void render(Screen screen, Rectangle rect, int x, int y) {
+		if(!rect.equals(CENTER))
+			screen.renderFilledRect(x, y, TILESIZE, TILESIZE, lightFog);
 		screen.renderSubTexture(texture, rect, x, y);
 	}
 }

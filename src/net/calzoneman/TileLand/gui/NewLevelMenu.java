@@ -50,6 +50,12 @@ public class NewLevelMenu extends GUIMenu {
 		container.addChild("lvlnamelbl", lvlNameLbl);
 		curY += lvlNameTxt.getHeight() + 10;
 		
+		GUICheckbox editCheck = new GUICheckbox(x2, curY);
+		container.addChild("editcheck", editCheck);
+		GUILabel editLbl = new GUILabel(x1, curY + editCheck.getHeight() / 2 - charHeight / 2, "Edit Mode");
+		container.addChild("editlbl", editLbl);
+		curY += editCheck.getHeight() + 10;
+		
 		GUIButton cancelBtn = new GUIButton(x1, curY, 135, "Cancel");
 		cancelBtn.setClickHandler(
 				new Delegate<GUIContainer, Void>() {
@@ -161,7 +167,9 @@ public class NewLevelMenu extends GUIMenu {
 			((GUILabel) container.getChild("heighterror")).setText(Font.TEXT_DARK_RED + "Invalid level height");
 			error = true;
 		}
-		gameParameters = new GameParameters(w, h, lvlName, plyName);
+		
+		boolean edit = ((GUICheckbox) container.getChild("editcheck")).isChecked();
+		gameParameters = new GameParameters(w, h, lvlName, plyName, edit);
 		return !error;
 	}
 	
@@ -174,14 +182,16 @@ public class NewLevelMenu extends GUIMenu {
 		public int height;
 		public String levelName;
 		public String playerName;
+		public boolean editMode;
 		
-		public static final GameParameters defaultGameParameters = new GameParameters(100, 100, "untitled", "Player");
+		public static final GameParameters defaultGameParameters = new GameParameters(100, 100, "untitled", "Player", false);
 		
-		public GameParameters(int width, int height, String levelName, String playerName) {
+		public GameParameters(int width, int height, String levelName, String playerName, boolean edit) {
 			this.width = width;
 			this.height = height;
 			this.levelName = levelName;
 			this.playerName = playerName;
+			this.editMode = edit;
 		}
 	}
 }
