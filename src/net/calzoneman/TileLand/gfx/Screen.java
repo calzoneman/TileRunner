@@ -93,6 +93,14 @@ public class Screen {
 		offX = xo;
 		offY = yo;
 	}
+	
+	public int getOffsetX() {
+		return offX;
+	}
+	
+	public int getOffsetY() {
+		return offY;
+	}
 
 	public void renderFPS() {
 		if(!initialized)

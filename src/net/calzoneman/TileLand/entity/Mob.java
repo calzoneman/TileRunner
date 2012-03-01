@@ -16,6 +16,9 @@ public abstract class Mob extends Entity {
 	protected int movedSinceSpriteUpdate = 0;
 	protected Level level;
 	protected final Random rand = new Random();
+	
+	protected int walkSpeed = 3;
+	protected int sprintSpeed = 5;
 
 
 	public Mob(int x, int y, MobSprite sprite) {
@@ -51,7 +54,7 @@ public abstract class Mob extends Entity {
 	public boolean move(int direction, boolean sprint) {
 		boolean moved = false;
 		int oldFacing = this.facing;
-		int amt = sprint ? 4 : 2;
+		int amt = sprint ? sprintSpeed : walkSpeed;
 		switch(direction) {
 			case Keyboard.KEY_UP:
 				setFacing(MobSprite.FACING_UP);

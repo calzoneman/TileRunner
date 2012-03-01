@@ -5,7 +5,7 @@ import net.calzoneman.TileLand.Game;
 import net.calzoneman.TileLand.entity.Entity;
 import net.calzoneman.TileLand.event.EventManager;
 import net.calzoneman.TileLand.gfx.Screen;
-import net.calzoneman.TileLand.inventory.ItemStack;
+import net.calzoneman.TileLand.inventory.Item;
 import net.calzoneman.TileLand.inventory.TileItem;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.level.Location;
@@ -123,15 +123,18 @@ public class MainScreen extends GameScreen {
 	private void click(Player ply, int mouseX, int mouseY) {
 		if(!mouse[0] && !mouse[1])
 			return;
-		Location position = ply.getTilePosition();
 		Level level = ply.getLevel();
-		// Mouse offset in the level
+		Location pos = ply.getPosition();
+		Location tpos = ply.getTilePosition();
+		// Calculate at what offset to begin rendering the level
 		Location offset = new Location(
-				position.x - Display.getWidth() / Tile.TILESIZE / 2,
-				position.y - Display.getHeight() / Tile.TILESIZE / 2);
+				tpos.x - Display.getWidth() / Tile.TILESIZE / 2,
+				tpos.y - Display.getHeight() / Tile.TILESIZE / 2);
+		int xo = (pos.x % Entity.POSITIONS_PER_TILE);
+		int yo = (pos.y % Entity.POSITIONS_PER_TILE);
 		// tx and ty are the coordinates for the tile under the mouse cursor
-		int tx = mouseX / Tile.TILESIZE + offset.x;
-		int ty = (Display.getHeight() - mouseY) / Tile.TILESIZE + offset.y;
+		int tx = (mouseX + xo) / Tile.TILESIZE + offset.x;
+		int ty = ((Display.getHeight() - mouseY) + yo) / Tile.TILESIZE + offset.y;
 		
 		if(tx < 0 || ty < 0 || tx >= level.getWidth() || ty >= level.getHeight())
 			return;
@@ -194,23 +197,20 @@ public class MainScreen extends GameScreen {
 	private void renderMouse(Screen screen, Location renderStart) {
 		Player player = parent.getPlayer();
 		Level level = player.getLevel();
-		ItemStack current = null;
+		Item current = player.getHeldItem();
 		Color col = transparentGreen;
-		int tx = Mouse.getX() / Tile.TILESIZE + renderStart.x;
-		int ty = (Display.getHeight() - Mouse.getY()) / Tile.TILESIZE + renderStart.y;
-		if(player.getInventory().getQuickbar().getSelectedItemStack() == null // Selected item is null
+		int tx = (Mouse.getX() + screen.getOffsetX()) / Tile.TILESIZE + renderStart.x;
+		int ty = ((Display.getHeight() - Mouse.getY()) + screen.getOffsetY()) / Tile.TILESIZE + renderStart.y;
+		if(current == null // Selected item is null
 				|| (tx == player.getPosition().x && ty == player.getPosition().y) // Cursor is over the player
 				|| tx < 0 || tx >= level.getWidth() || ty < 0 || ty >= level.getHeight()) // Mouse it outside the bounds of the Level
 			col = transparentRed;
-		current = player.getInventory().getQuickbar().getSelectedItemStack();
 		
-		int mx = Mouse.getX();
-		int my = Mouse.getY();
-		tx = mx / Tile.TILESIZE;
-		ty = (Display.getHeight() - my) / Tile.TILESIZE;
+		tx -= renderStart.x;
+		ty -= renderStart.y;
 		if(current != null) {
 			col.bind();
-			current.getItem().render(screen, tx * Tile.TILESIZE, ty * Tile.TILESIZE);
+			current.render(screen, tx * Tile.TILESIZE, ty * Tile.TILESIZE);
 		}
 		else {
 			screen.renderFilledRect(tx * Tile.TILESIZE, ty * Tile.TILESIZE, Tile.TILESIZE, Tile.TILESIZE, col);
