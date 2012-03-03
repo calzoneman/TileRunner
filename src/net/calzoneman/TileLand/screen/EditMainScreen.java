@@ -185,16 +185,12 @@ public class EditMainScreen extends GameScreen {
 			if(its.getItem() instanceof TileItem) {
 				TileItem it = (TileItem) its.getItem();
 				if(it.getTile().isForeground()) {
-					if(level.getFgId(tx, ty) == TypeId.AIR && tx != ply.getTilePosition().x && ty != ply.getTilePosition().y) { 
-						level.setFg(tx, ty, it.getTile());
-						level.setFgData(tx, ty, it.getData());
-					}
+					level.setFg(tx, ty, it.getTile());
+					level.setFgData(tx, ty, it.getData());
 				}
 				else {
-					if(level.getBgId(tx, ty) != it.getTile().id) {
-						level.setBg(tx, ty, it.getTile());
-						level.setBgData(tx, ty, it.getData());
-					}
+					level.setBg(tx, ty, it.getTile());
+					level.setBgData(tx, ty, it.getData());
 				}
 			}
 		}

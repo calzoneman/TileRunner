@@ -19,7 +19,7 @@ public class LakeTile extends DirectionalTile {
 	
 	@Override
 	public boolean transitionsTo(Tile other) {
-		return other.id == TypeId.GRASS || other.id == TypeId.SAND;
+		return other.id != id;
 	}
 	
 	@Override

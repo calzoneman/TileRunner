@@ -42,7 +42,7 @@ public class Fog extends Tile {
 		boolean l = !level.visited(tx - 1, ty);
 		boolean r = !level.visited(tx + 1, ty);
 
-		/*boolean ul = u && l && level.visited(tx - 1, ty - 1);
+		boolean ul = u && l && level.visited(tx - 1, ty - 1);
 		boolean ur = u && r && level.visited(tx + 1, ty - 1);
 		boolean dl = d && l && level.visited(tx - 1, ty + 1);
 		boolean dr = d && r && level.visited(tx + 1, ty + 1);
@@ -55,7 +55,7 @@ public class Fog extends Tile {
 			render(screen, BOTTOM_CORNER_LEFT_MISSING, x, y);
 		else if(dr && !ul && !ur && !dl)
 			render(screen, BOTTOM_CORNER_RIGHT_MISSING, x, y);
-		else {*/
+		else {
 			if(u && d && l && !r)
 				render(screen, RIGHT_EDGE, x, y);
 			else if(u && d && r && !l)
@@ -75,7 +75,7 @@ public class Fog extends Tile {
 			else {
 				render(screen, CENTER, x, y);
 			}
-		//}
+		}
 	}
 	
 	public void render(Screen screen, Rectangle rect, int x, int y) {

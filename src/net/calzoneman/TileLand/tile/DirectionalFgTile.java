@@ -5,10 +5,11 @@ import org.newdawn.slick.opengl.Texture;
 import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.level.Level;
 
-public class DirectionalForegroundTile extends DirectionalTile {
+public class DirectionalFgTile extends DirectionalTile {
 	
-	public DirectionalForegroundTile(short id, String name, Texture texture) {
+	public DirectionalFgTile(short id, String name, Texture texture) {
 		super(id, name, texture);
+		foreground = true;
 	}
 
 	@Override
