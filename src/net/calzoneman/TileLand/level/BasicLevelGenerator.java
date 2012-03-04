@@ -133,6 +133,7 @@ public class BasicLevelGenerator extends LevelGenerator {
 		
 		// Make the Level
 		level = new Level(bg, fg);
+		level.tryFindSpawn(1000);
 		return level;
 	}
 	

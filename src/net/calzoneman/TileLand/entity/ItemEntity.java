@@ -5,12 +5,12 @@ import net.calzoneman.TileLand.gfx.Sprite;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.level.Location;
 
-public class TestEntity extends Entity {
+public class ItemEntity extends Entity {
 	
 	protected int velocity;
 	protected double ang;
 
-	public TestEntity(Level level, int x, int y, int vel, double ang, Sprite sprite) {
+	public ItemEntity(Level level, int x, int y, int vel, double ang, Sprite sprite) {
 		super(level, x, y, sprite);
 		this.velocity = vel;
 		this.ang = ang;

@@ -1,10 +1,15 @@
 package net.calzoneman.TileLand.screen;
 
 
+import java.io.IOException;
+
 import net.calzoneman.TileLand.Game;
+import net.calzoneman.TileLand.ResourceManager;
 import net.calzoneman.TileLand.entity.Entity;
 import net.calzoneman.TileLand.entity.Mob.MoveDirection;
 import net.calzoneman.TileLand.event.EventManager;
+import net.calzoneman.TileLand.gfx.AnimatedSprite;
+import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.gfx.MobSprite;
 import net.calzoneman.TileLand.gfx.Screen;
 import net.calzoneman.TileLand.level.Level;
@@ -27,11 +32,19 @@ public class MainScreen extends GameScreen {
 	static final int KEY_RIGHT = Keyboard.KEY_D;
 	static final int KEY_HIT = Keyboard.KEY_RETURN;
 	
+	private AnimatedSprite coinSprite;
 	private int currentMoveKey;
 	
 	public MainScreen(Game parent) {
 		super(0, 0, Display.getWidth(), Display.getHeight(), parent);
 		this.currentMoveKey = -1;
+		try {
+			coinSprite = new AnimatedSprite(
+					ResourceManager.ITEMSHEET.getCustomTileTexture(0, 0, 4, 1), 32, 100);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -174,6 +187,13 @@ public class MainScreen extends GameScreen {
 	}
 	
 	private void renderHud(Screen screen) {
+		Player ply = parent.getPlayer();
+		int cx = 32 - coinSprite.getWidth()/2;
+		int cy = 32 - coinSprite.getHeight()/2;
+		int sx = cx + coinSprite.getWidth();
+		int sy = 32 + (Font.getHeightLarge(""+ply.getCoins()) - coinSprite.getHeight())/2;
+		coinSprite.render(screen, cx, cy);
+		Font.drawLarge(""+ply.getCoins(), screen, sx, sy);
 	}
 
 }

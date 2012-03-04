@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.newdawn.slick.Color;
 
@@ -42,6 +43,8 @@ public class Level {
 	public String name = "save";
 	/** Whether or not the Level is initialized */
 	public boolean initialized = false;
+	
+	final Random rand = new Random();
 	
 	private List<Entity> entities;
 	private long tickCount = 0;
@@ -188,6 +191,17 @@ public class Level {
 		return true;
 	}
 	
+	public void tryFindSpawn(int tries) {
+		for(int i = 0; i < tries; i++) {
+			int x = rand.nextInt(width);
+			int y = rand.nextInt(height);
+			if(canPass(x, y)) {
+				spawnpoint = new Location(x, y);
+				break;
+			}
+		}
+	}
+	
 	public void render(Screen screen, Player player, int offX, int offY, int maxWidth, int maxHeight) {
 		for(int i = offX; i < offX + maxWidth; i++) {
 			for(int j = offY; j < offY + maxHeight; j++) {
@@ -240,6 +254,17 @@ public class Level {
 			ent.think(this, tickCount);
 		}
 		tickCount++;
+	}
+	
+	public List<Entity> getEntitiesInTile(int tx, int ty) {
+		List<Entity> list = new ArrayList<Entity>();
+		for(Entity ent : entities) {
+			Location pos = ent.getTilePosition();
+			if(pos.x == tx && pos.y == ty) {
+				list.add(ent);
+			}
+		}
+		return list;
 	}
 	
 	// Tile getters/setters

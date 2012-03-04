@@ -2,9 +2,8 @@ package net.calzoneman.TileLand.tile;
 
 import java.io.IOException;
 
+import net.calzoneman.TileLand.entity.CoinEntity;
 import net.calzoneman.TileLand.entity.Entity;
-import net.calzoneman.TileLand.entity.TestEntity;
-import net.calzoneman.TileLand.gfx.Sprite;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.player.Player;
 
@@ -28,7 +27,7 @@ public class PotTile extends Tile {
 			int mag = rand.nextInt(4) + 4;
 			double ang = rand.nextDouble() * 2 * Math.PI;
 			try {
-				level.addEntity(new TestEntity(level, ex, ey, mag, ang, new Sprite(TileTypes.spritesheet.getTileTexture(1 + 10 * TileTypes.spritesheet.width))));
+				level.addEntity(new CoinEntity(level, ex, ey, mag, ang));
 				level.setFgId(tx, ty, TypeId.AIR);
 			} 
 			catch (IOException e) {

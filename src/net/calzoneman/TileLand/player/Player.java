@@ -2,9 +2,13 @@ package net.calzoneman.TileLand.player;
 
 
 
+
+import java.util.List;
+
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.Color;
 
+import net.calzoneman.TileLand.entity.CoinEntity;
 import net.calzoneman.TileLand.entity.Entity;
 import net.calzoneman.TileLand.entity.Mob;
 import net.calzoneman.TileLand.gfx.MobSprite;
@@ -25,6 +29,7 @@ public class Player extends Mob {
 	protected Inventory inventory;
 	protected Item heldItem;
 	protected int stamina = MAX_STAMINA;
+	protected int coins = 0;
 	
 	/**
 	 * Parameterless constructor
@@ -84,19 +89,7 @@ public class Player extends Mob {
 	
 	@Override
 	public boolean move(int direction) {
-		boolean success = super.move(direction);
-		if(success) {
-			int px = getTilePosition().x;
-			int py = getTilePosition().y;
-			for(int i = px - LAMP_RADIUS; i <= px + LAMP_RADIUS; i++) {
-				for(int j = py - LAMP_RADIUS; j <= py + LAMP_RADIUS; j++) {
-					int r = rand.nextInt(2) - 1;
-					if((i - px) * (i - px) + (j - py) * (j - py) <= (LAMP_RADIUS + r) * (LAMP_RADIUS + r))
-						level.visit(i, j);
-				}
-			}
-		}
-		return success;
+		return move(direction, false);
 	}
 	
 	@Override
@@ -113,8 +106,20 @@ public class Player extends Mob {
 						level.visit(i, j);
 				}
 			}
+			
+			List<Entity> touched = level.getEntitiesInTile(px, py);
+			for(Entity ent : touched) {
+				if(ent instanceof CoinEntity) {
+					level.removeEntity(ent);
+					coins++;
+				}
+			}
 		}
 		return success;
+	}
+	
+	public int getCoins() {
+		return coins;
 	}
 
 	public String getName() {

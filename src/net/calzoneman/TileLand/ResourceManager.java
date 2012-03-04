@@ -19,6 +19,7 @@ public class ResourceManager {
 	public static Texture PLAYER_TEXTURE;
 	public static Texture TITLE_TEXTURE;
 	public static SpriteSheet TILESHEET;
+	public static SpriteSheet ITEMSHEET;
 	public static UnicodeFont FONT;
 	public static UnicodeFont FONT_LARGE;
 	
@@ -55,6 +56,12 @@ public class ResourceManager {
 		}
 		try {
 			TILESHEET = new SpriteSheet(ResourceManager.class.getResourceAsStream("/tiles.png"), 32);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			ITEMSHEET = new SpriteSheet(ResourceManager.class.getResourceAsStream("/items.png"), 32);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
