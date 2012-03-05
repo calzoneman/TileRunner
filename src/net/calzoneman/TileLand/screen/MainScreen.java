@@ -23,6 +23,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.opengl.Texture;
 
 public class MainScreen extends GameScreen {
 	
@@ -33,14 +34,21 @@ public class MainScreen extends GameScreen {
 	static final int KEY_HIT = Keyboard.KEY_RETURN;
 	
 	private AnimatedSprite coinSprite;
+	private Texture hitSprite;
 	private int currentMoveKey;
-	
+		
 	public MainScreen(Game parent) {
 		super(0, 0, Display.getWidth(), Display.getHeight(), parent);
 		this.currentMoveKey = -1;
 		try {
 			coinSprite = new AnimatedSprite(
 					ResourceManager.ITEMSHEET.getCustomTileTexture(0, 0, 4, 1), 32, 100);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			hitSprite = ResourceManager.MISCSHEET.getTileTexture(0);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -188,6 +196,22 @@ public class MainScreen extends GameScreen {
 	
 	private void renderHud(Screen screen) {
 		Player ply = parent.getPlayer();
+		
+		if(keys[KEY_HIT]) {
+			int x = Display.getWidth() / 2 - ply.getSprite().getWidth() / 2;
+			int y = Display.getHeight() / 2 - ply.getSprite().getHeight() / 2;
+			int facing = ply.getFacing();
+			if(facing == MobSprite.FACING_UP)
+				y -= 42;
+			else if(facing == MobSprite.FACING_RIGHT)
+				x += 32;
+			else if(facing == MobSprite.FACING_DOWN)
+				y += 32;
+			else if(facing == MobSprite.FACING_LEFT)
+				x -= 32;
+			screen.renderTexture(hitSprite, x, y);
+		}
+		
 		int cx = 32 - coinSprite.getWidth()/2;
 		int cy = 32 - coinSprite.getHeight()/2;
 		int sx = cx + coinSprite.getWidth();
@@ -195,5 +219,4 @@ public class MainScreen extends GameScreen {
 		coinSprite.render(screen, cx, cy);
 		Font.drawLarge(""+ply.getCoins(), screen, sx, sy);
 	}
-
 }

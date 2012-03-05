@@ -20,6 +20,7 @@ public class ResourceManager {
 	public static Texture TITLE_TEXTURE;
 	public static SpriteSheet TILESHEET;
 	public static SpriteSheet ITEMSHEET;
+	public static SpriteSheet MISCSHEET;
 	public static UnicodeFont FONT;
 	public static UnicodeFont FONT_LARGE;
 	
@@ -66,6 +67,13 @@ public class ResourceManager {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		try {
+			MISCSHEET = new SpriteSheet(ResourceManager.class.getResourceAsStream("/misc.png"), 32);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		
 		try {
 			FONT = new UnicodeFont(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, ResourceManager.class.getResourceAsStream("/font.ttf")), 8, false, false);

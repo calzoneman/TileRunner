@@ -19,7 +19,7 @@ public class Colorizer {
 		// Map each source color to a destination color
 		Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
 		for(int i = 0; i < origColors.size() && i < colors.length; i++) {
-			mapping.put(origColors.get(i), 0xFF000000 | colors[i]);
+			mapping.put(origColors.get(i), colors[i]);
 		}
 		
 		// Change colors
