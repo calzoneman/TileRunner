@@ -7,6 +7,7 @@ import net.calzoneman.TileLand.entity.Mob.MoveDirection;
 import net.calzoneman.TileLand.event.EventManager;
 import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gui.MenuManager;
 import net.calzoneman.TileLand.inventory.Item;
 import net.calzoneman.TileLand.inventory.ItemStack;
 import net.calzoneman.TileLand.inventory.TileItem;
@@ -37,6 +38,7 @@ public class EditMainScreen extends GameScreen {
 	static final int KEY_SAVE = Keyboard.KEY_F1;
 	static final int KEY_SETSPAWN = Keyboard.KEY_RETURN;
 	static final int KEY_RESPAWN = Keyboard.KEY_R;
+	static final int KEY_PAUSE = Keyboard.KEY_ESCAPE;
 	
 	static final long MESSAGE_FADE_DELAY = 5000L;
 	
@@ -119,6 +121,10 @@ public class EditMainScreen extends GameScreen {
 				loc.x = loc.x * Entity.POSITIONS_PER_TILE + Entity.POSITIONS_PER_TILE / 2;
 				loc.y = loc.y * Entity.POSITIONS_PER_TILE + Entity.POSITIONS_PER_TILE / 2;
 				ply.setPosition(loc);
+			}
+			
+			if(keys[KEY_PAUSE]) {
+				MenuManager.getMenuManager().openMenu("pausemenu");
 			}
 			
 		}

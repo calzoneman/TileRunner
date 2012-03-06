@@ -68,7 +68,7 @@ public class Font {
 	}
 	
 	public static void drawLarge(String str, Screen screen, int x, int y, Color bg) {
-		internalDraw(str, screen, innerFontLarge, x, y, COLOR_BLACK);
+		internalDraw(str, screen, innerFontLarge, x, y, bg);
 	}
 	
 	private static void internalDraw(String str, Screen screen, UnicodeFont font, int x, int y, Color bg) {

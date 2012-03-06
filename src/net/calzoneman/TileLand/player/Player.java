@@ -111,7 +111,7 @@ public class Player extends Mob {
 			for(Entity ent : touched) {
 				if(ent instanceof CoinEntity) {
 					level.removeEntity(ent);
-					coins++;
+					coins += ((CoinEntity) ent).value();
 				}
 			}
 		}

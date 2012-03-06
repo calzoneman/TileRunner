@@ -43,7 +43,8 @@ public class TileTypes {
 			addTile(new MultitextureForegroundTile(SIGN, "sign", sheet.getCustomTileTexture(7, 9, 3, 1)));
 			addTile(new MultitextureForegroundTile(ROCK, "rock", sheet.getCustomTileTexture(11, 9, 1, 1)));
 			addTile(new MountainTile(MOUNTAIN, "mountain", sheet.getCustomTileTexture(0, 3, 5, 3)));
-			addTile(new PotTile(POT, "pot", sheet.getTileTexture(2 + 10 * sheet.width)));
+			addTile(new PotTile(POT, "pot", sheet.getTileTexture(0 + 10 * sheet.width)));
+			addTile(new BrokenPotTile(BROKEN_POT, "broken_pot", sheet.getTileTexture(1 + 10 * sheet.width)));
 		} 
 		catch (IOException ex) {
 			Sys.alert("TileLand", "Unable to load tiletypes!");

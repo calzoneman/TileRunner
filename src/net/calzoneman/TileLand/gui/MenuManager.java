@@ -49,6 +49,9 @@ public class MenuManager {
 		else if(menuName.equals("mplogin")) {
 			currentMenu = new MPLoginMenu();
 		}
+		else if(menuName.equals("pausemenu")) {
+			currentMenu = new PauseMenu();
+		}
 		if(old != null)
 			pushParent(old);
 	}

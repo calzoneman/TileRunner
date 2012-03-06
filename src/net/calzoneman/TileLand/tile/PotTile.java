@@ -1,6 +1,5 @@
 package net.calzoneman.TileLand.tile;
 
-import java.io.IOException;
 
 import net.calzoneman.TileLand.entity.CoinEntity;
 import net.calzoneman.TileLand.entity.Entity;
@@ -26,14 +25,9 @@ public class PotTile extends Tile {
 		for(int i = 0; i < count; i++) {
 			int mag = rand.nextInt(4) + 4;
 			double ang = rand.nextDouble() * 2 * Math.PI;
-			try {
-				level.addEntity(new CoinEntity(level, ex, ey, mag, ang));
-				level.setFgId(tx, ty, TypeId.AIR);
-			} 
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			int type = rand.nextInt() < 5 ? CoinEntity.TYPE_SILVER : CoinEntity.TYPE_COPPER;
+			level.addEntity(new CoinEntity(level, ex, ey, mag, ang, type));
+			level.setFgId(tx, ty, TypeId.BROKEN_POT);
 		}
 	}
 }

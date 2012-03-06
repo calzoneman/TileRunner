@@ -12,6 +12,7 @@ import net.calzoneman.TileLand.gfx.AnimatedSprite;
 import net.calzoneman.TileLand.gfx.Font;
 import net.calzoneman.TileLand.gfx.MobSprite;
 import net.calzoneman.TileLand.gfx.Screen;
+import net.calzoneman.TileLand.gui.MenuManager;
 import net.calzoneman.TileLand.level.Level;
 import net.calzoneman.TileLand.level.Location;
 import net.calzoneman.TileLand.player.Player;
@@ -32,8 +33,12 @@ public class MainScreen extends GameScreen {
 	static final int KEY_LEFT = Keyboard.KEY_A;
 	static final int KEY_RIGHT = Keyboard.KEY_D;
 	static final int KEY_HIT = Keyboard.KEY_RETURN;
+	static final int KEY_PAUSE = Keyboard.KEY_ESCAPE;
 	
-	private AnimatedSprite coinSprite;
+	private AnimatedSprite copperCoin;
+	private AnimatedSprite silverCoin;
+	private AnimatedSprite goldCoin;
+
 	private Texture hitSprite;
 	private int currentMoveKey;
 		
@@ -41,8 +46,9 @@ public class MainScreen extends GameScreen {
 		super(0, 0, Display.getWidth(), Display.getHeight(), parent);
 		this.currentMoveKey = -1;
 		try {
-			coinSprite = new AnimatedSprite(
-					ResourceManager.ITEMSHEET.getCustomTileTexture(0, 0, 4, 1), 32, 100);
+			copperCoin = new AnimatedSprite(ResourceManager.ITEMSHEET.getCustomTileTexture(0, 0, 4, 1), 32, 100);
+			silverCoin = new AnimatedSprite(ResourceManager.ITEMSHEET.getCustomTileTexture(0, 1, 4, 1), 32, 100);
+			goldCoin = new AnimatedSprite(ResourceManager.ITEMSHEET.getCustomTileTexture(0, 2, 4, 1), 32, 100);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -104,8 +110,8 @@ public class MainScreen extends GameScreen {
 				else if(keys[KEY_RIGHT])
 					currentMoveKey = KEY_RIGHT;
 			}
-			if(keys[Keyboard.KEY_ESCAPE]) 
-				parent.openScreen(new InventoryScreen());
+			if(keys[KEY_PAUSE]) 
+				MenuManager.getMenuManager().openMenu("pausemenu");
 			//if(keys[Keyboard.KEY_T])
 			//	parent.openChat();
 			if(keys[KEY_HIT]) {
@@ -191,10 +197,10 @@ public class MainScreen extends GameScreen {
 		// Render the player sprite
 		player.render(screen, level, (tpos.x - renderStart.x) * Entity.POSITIONS_PER_TILE, (tpos.y - renderStart.y) * Entity.POSITIONS_PER_TILE);
 		
-		renderHud(screen);
+		renderGui(screen);
 	}
 	
-	private void renderHud(Screen screen) {
+	private void renderGui(Screen screen) {
 		Player ply = parent.getPlayer();
 		
 		if(keys[KEY_HIT]) {
@@ -212,11 +218,35 @@ public class MainScreen extends GameScreen {
 			screen.renderTexture(hitSprite, x, y);
 		}
 		
-		int cx = 32 - coinSprite.getWidth()/2;
-		int cy = 32 - coinSprite.getHeight()/2;
-		int sx = cx + coinSprite.getWidth();
-		int sy = 32 + (Font.getHeightLarge(""+ply.getCoins()) - coinSprite.getHeight())/2;
-		coinSprite.render(screen, cx, cy);
-		Font.drawLarge(""+ply.getCoins(), screen, sx, sy);
+		renderCoins(screen, ply);
+	}
+	
+	private void renderCoins(Screen screen, Player ply) {
+
+		int coins = ply.getCoins();
+		int gCoins = coins / 10000;
+		int sCoins = (coins % 10000) / 100;
+		int cCoins = coins % 100;
+		
+		int cx = 32 - goldCoin.getWidth()/2;
+		int cy = 32 - goldCoin.getHeight()/2;
+		int sx = cx + goldCoin.getWidth();
+		int sy = 32 + (Font.getHeightLarge(""+gCoins) - goldCoin.getHeight())/2;
+		goldCoin.render(screen, cx, cy);
+		Font.drawLarge(""+gCoins, screen, sx, sy);
+		
+		cx = 32 - silverCoin.getWidth()/2;
+		sx = cx + silverCoin.getWidth();
+		cy += 20;
+		sy += 20;
+		silverCoin.render(screen, cx, cy);
+		Font.drawLarge(""+sCoins, screen, sx, sy);
+		
+		cx = 32 - copperCoin.getWidth()/2;
+		sx = cx + copperCoin.getWidth();
+		cy += 20;
+		sy += 20;
+		copperCoin.render(screen, cx, cy);
+		Font.drawLarge(""+cCoins, screen, sx, sy);
 	}
 }

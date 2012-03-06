@@ -21,7 +21,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 public class TileLand {	
-	public static final String version = "0.04";
+	public static final String version = "0.04_02";
 	static Screen screen;
 	static AtomicReference<Dimension> newSize = new AtomicReference<Dimension>();
 	static boolean closeRequested = false;

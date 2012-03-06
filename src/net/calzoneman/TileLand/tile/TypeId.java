@@ -22,5 +22,5 @@ public class TypeId {
 	public static final short ROCK = 4099;
 	public static final short MOUNTAIN = 4100;
 	public static final short POT = 4101;
-	
+	public static final short BROKEN_POT = 4102;
 }
